@@ -1,0 +1,1617 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<meta name="theme-color" content="#202628">
+<title>肌动 · 健身减脂与身体成长工作台</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1024 1024'%3E%3Crect width='1024' height='1024' rx='220' fill='%23202628'/%3E%3Cg transform='translate(512 512)'%3E%3Cline x1='-300' y1='120' x2='300' y2='120' stroke='%23C24B3A' stroke-width='52' stroke-linecap='round'/%3E%3Crect x='-380' y='20' width='100' height='200' rx='34' fill='%23F4F1EA'/%3E%3Crect x='280' y='20' width='100' height='200' rx='34' fill='%23F4F1EA'/%3E%3C/g%3E%3C/svg%3E">
+<style>/* 肌动 · 视觉系统与布局
+ * 主色炭黑 #202628；强调赤陶 #C24B3A；辅助深绿 #3E5C50；纸感 #F4F1EA。
+ * 无渐变、无玻璃拟态、无霓虹；统一线性图标；三级字体层级。
+ */
+:root{
+  --ink:#202628; --accent:#C24B3A; --green:#3E5C50; --taupe:#8A8276;
+  --paper:#F4F1EA; --paper2:#EAE5DA; --line:#D8D2C6; --white:#FBF9F4;
+  --shadow:0 2px 10px rgba(32,38,40,.08);
+  --r:16px; --r-s:10px;
+  --t1:24px; --t2:16px; --t3:13px; --t4:11px;
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;padding:0;background:#cfc9bd;font-family:"PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif;color:var(--ink);}
+body{display:flex;justify-content:center;min-height:100vh;}
+
+/* 手机画布 390x844 */
+.phone{width:390px;height:844px;background:var(--paper);position:relative;overflow:hidden;
+  box-shadow:0 20px 60px rgba(32,38,40,.30);display:flex;flex-direction:column;
+  background-image:radial-gradient(rgba(138,130,118,.06) 1px,transparent 1px);background-size:6px 6px;}
+@media(max-width:430px){.phone{width:100vw;height:100vh;box-shadow:none}}
+
+#screen{position:absolute;top:0;left:0;right:0;bottom:70px;overflow-y:auto;overflow-x:hidden;
+  -webkit-overflow-scrolling:touch;background:var(--paper);padding:0;}
+.screen::-webkit-scrollbar{width:0}
+
+/* 通用文字层级 */
+.h1{font-size:var(--t1);font-weight:800;letter-spacing:.5px}
+.h2{font-size:var(--t2);font-weight:700}
+.cap{font-size:var(--t3);color:var(--taupe)}
+.micro{font-size:var(--t4);color:var(--taupe)}
+.num{font-variant-numeric:tabular-nums;font-weight:800}
+
+/* 顶部状态条 */
+.topbar{position:sticky;top:0;z-index:20;background:var(--paper);padding:14px 18px 10px;
+  display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--line)}
+.brand{display:flex;align-items:center;gap:9px}
+.brand .mark{width:34px;height:34px;border-radius:9px;overflow:hidden;flex:0 0 auto}
+.brand .name{font-weight:800;font-size:17px;line-height:1}
+.brand .sub{font-size:10px;color:var(--taupe);margin-top:2px}
+.topdate{font-size:11px;color:var(--taupe);text-align:right;line-height:1.4}
+
+/* 主视觉（首页场景焦点）*/
+.hero{position:relative;margin:14px 14px 0;border-radius:var(--r);overflow:hidden;
+  background:var(--ink);color:var(--white);min-height:182px;box-shadow:var(--shadow)}
+.hero svg{position:absolute;inset:0;width:100%;height:100%;opacity:.9}
+.hero .overlay{position:relative;padding:16px 16px 14px;height:100%;display:flex;flex-direction:column;justify-content:space-between}
+.hero .tag{display:inline-block;background:var(--accent);color:#fff;font-size:11px;font-weight:700;
+  padding:3px 9px;border-radius:20px;align-self:flex-start}
+.hero .big{font-size:40px;font-weight:800;line-height:1;margin:6px 0 2px}
+.hero .big small{font-size:15px;font-weight:600;opacity:.85}
+.hero .lead{font-size:12px;opacity:.9;max-width:230px}
+.hero .cta{display:flex;gap:8px;margin-top:10px}
+.hero .cta button{flex:1}
+
+/* 按钮 */
+.btn{border:none;border-radius:12px;padding:11px 14px;font-size:14px;font-weight:700;cursor:pointer;
+  font-family:inherit;display:inline-flex;align-items:center;justify-content:center;gap:6px;transition:.15s}
+.btn:active{transform:scale(.97)}
+.btn-primary{background:var(--accent);color:#fff}
+.btn-ink{background:var(--ink);color:#fff}
+.btn-ghost{background:rgba(255,255,255,.12);color:#fff;border:1px solid rgba(255,255,255,.25)}
+.btn-line{background:transparent;color:var(--ink);border:1px solid var(--line)}
+.btn-block{width:100%}
+.btn-sm{padding:7px 11px;font-size:12px;border-radius:10px}
+.btn-danger{background:#fff;color:var(--accent);border:1px solid var(--accent)}
+.fab{position:fixed;right:calc(50% - 195px + 18px);bottom:92px;width:54px;height:54px;border-radius:50%;
+  background:var(--accent);color:#fff;border:none;box-shadow:0 6px 18px rgba(194,75,58,.4);
+  display:flex;align-items:center;justify-content:center;cursor:pointer;z-index:30}
+.fab svg{width:24px;height:24px}
+@media(max-width:430px){.fab{right:18px}}
+
+/* 分区 */
+.section{margin:18px 14px 0}
+.section-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}
+.section-head .t{font-size:15px;font-weight:800}
+.section-head a{font-size:12px;color:var(--accent);font-weight:700;display:flex;align-items:center;gap:2px;text-decoration:none}
+
+/* 卡片网格（尺寸/比例有变化）*/
+.grid{display:grid;gap:12px}
+.grid.c2{grid-template-columns:1fr 1fr}
+.grid.c3{grid-template-columns:repeat(3,1fr)}
+.hscroll{display:flex;gap:12px;overflow-x:auto;padding-bottom:4px;scroll-snap-type:x mandatory}
+.hscroll>.card{scroll-snap-align:start;flex:0 0 72%}
+
+.card{background:var(--white);border-radius:var(--r);padding:12px;box-shadow:var(--shadow);
+  border:1px solid var(--line);cursor:pointer;transition:.15s}
+.card:active{transform:translateY(1px)}
+.card .cov{width:100%;border-radius:12px;overflow:hidden;background:var(--paper2);aspect-ratio:4/3}
+.card .cov svg{width:100%;height:100%;display:block}
+.card .ttl{font-weight:700;font-size:14px;margin:9px 0 3px;line-height:1.25}
+.card .meta{display:flex;align-items:center;gap:8px;font-size:11px;color:var(--taupe);flex-wrap:wrap}
+.tagchip{background:var(--paper2);color:var(--ink);font-size:10px;padding:2px 7px;border-radius:20px;font-weight:600}
+.status{font-size:10px;font-weight:700;padding:2px 8px;border-radius:20px}
+.st-doing{background:#FFF1EC;color:var(--accent)}
+.st-done{background:#EAF1EC;color:var(--green)}
+.st-todo{background:var(--paper2);color:var(--taupe)}
+
+/* 数据条 */
+.statrow{display:flex;gap:12px}
+.stat{flex:1;background:var(--white);border-radius:var(--r);padding:13px;box-shadow:var(--shadow);border:1px solid var(--line)}
+.stat .k{font-size:11px;color:var(--taupe)}
+.stat .v{font-size:26px;font-weight:800;line-height:1.1;margin-top:4px}
+.stat .v small{font-size:13px;font-weight:600}
+.stat .d{font-size:10px;color:var(--green);margin-top:3px}
+
+/* 快捷操作 */
+.quick{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
+.quick .q{background:var(--white);border-radius:14px;padding:12px 6px;display:flex;flex-direction:column;
+  align-items:center;gap:6px;box-shadow:var(--shadow);border:1px solid var(--line);cursor:pointer}
+.quick .q:active{transform:scale(.96)}
+.quick .q .ic{width:30px;height:30px;color:var(--accent)}
+.quick .q .lb{font-size:11px;font-weight:700}
+
+/* 今日待办 */
+.todo{display:flex;align-items:center;gap:10px;background:var(--white);border-radius:12px;padding:11px 12px;
+  box-shadow:var(--shadow);border:1px solid var(--line);margin-bottom:9px;cursor:pointer}
+.todo .chk{width:22px;height:22px;border-radius:50%;border:2px solid var(--line);flex:0 0 auto;display:flex;align-items:center;justify-content:center}
+.todo.done .chk{background:var(--green);border-color:var(--green);color:#fff}
+.todo .body{flex:1;min-width:0}
+.todo .body .tt{font-weight:700;font-size:13px}
+.todo.done .body .tt{text-decoration:line-through;color:var(--taupe)}
+.todo .body .mt{font-size:11px;color:var(--taupe)}
+
+/* 底部导航 */
+.tabbar{position:absolute;bottom:0;left:0;right:0;height:70px;background:var(--ink);display:flex;
+  z-index:25;padding:6px 4px;box-sizing:border-box}
+.tabbar .tab{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;
+  color:rgba(244,241,234,.55);font-size:10px;font-weight:600;cursor:pointer;border:none;background:none;font-family:inherit}
+.tabbar .tab svg{width:22px;height:22px}
+.tabbar .tab.on{color:#fff}
+.tabbar .tab.on svg{color:var(--accent)}
+
+/* 详情页 */
+.detail-hero{height:200px;background:var(--ink);position:relative;overflow:hidden}
+.detail-hero svg{width:100%;height:100%}
+.detail-hero .back{position:absolute;top:14px;left:14px;min-width:34px;height:34px;padding:0 12px;border-radius:20px;
+  background:rgba(32,38,40,.5);color:#fff;display:flex;align-items:center;justify-content:center;cursor:pointer;border:none;font-size:14px}
+.detail-body{padding:16px 16px 30px;margin-top:-22px;position:relative}
+.detail-body .panel{background:var(--white);border-radius:var(--r);padding:15px;box-shadow:var(--shadow);border:1px solid var(--line);margin-bottom:12px}
+.kv{display:flex;justify-content:space-between;padding:9px 0;border-bottom:1px dashed var(--line);font-size:13px}
+.kv:last-child{border-bottom:none}
+.kv .k{color:var(--taupe)}
+.kv .v{font-weight:700}
+.exrow{display:flex;align-items:center;justify-content:space-between;background:var(--paper2);border-radius:10px;padding:8px 11px;margin-bottom:6px;font-size:13px}
+.exrow .nm{font-weight:700}
+.exrow .dt{color:var(--taupe);font-size:12px}
+
+/* 表单 */
+.field{margin-bottom:14px}
+.field label{display:block;font-size:12px;font-weight:700;margin-bottom:6px;color:var(--ink)}
+.field input,.field textarea,.field select{width:100%;border:1px solid var(--line);border-radius:10px;
+  padding:11px 12px;font-size:14px;font-family:inherit;background:var(--white);color:var(--ink)}
+.field textarea{resize:vertical;min-height:64px}
+.field input:focus,.field textarea:focus,.field select:focus{outline:none;border-color:var(--accent)}
+.seg{display:flex;gap:6px;flex-wrap:wrap}
+.seg .opt{flex:1;min-width:64px;text-align:center;padding:9px 6px;border:1px solid var(--line);border-radius:10px;
+  font-size:13px;font-weight:600;cursor:pointer;background:var(--white)}
+.seg .opt.on{background:var(--ink);color:#fff;border-color:var(--ink)}
+.coverpick{display:flex;gap:8px;overflow-x:auto;padding-bottom:4px}
+.coverpick .c{flex:0 0 64px;height:48px;border-radius:9px;overflow:hidden;border:2px solid transparent;cursor:pointer}
+.coverpick .c.on{border-color:var(--accent)}
+.coverpick .c svg{width:100%;height:100%}
+
+/* 步骤指示 */
+.steps{display:flex;align-items:center;gap:6px;margin-bottom:16px}
+.steps .s{flex:1;height:5px;border-radius:5px;background:var(--line)}
+.steps .s.on{background:var(--accent)}
+
+/* 列表筛选条 */
+.filterbar{display:flex;gap:8px;align-items:center;margin-bottom:12px;flex-wrap:wrap}
+.search{flex:1;display:flex;align-items:center;gap:7px;background:var(--white);border:1px solid var(--line);
+  border-radius:10px;padding:9px 11px;min-width:140px}
+.search input{border:none;outline:none;flex:1;font-size:13px;font-family:inherit;background:none}
+.chips{display:flex;gap:7px;overflow-x:auto;padding-bottom:2px}
+.chip{padding:6px 12px;border-radius:20px;background:var(--white);border:1px solid var(--line);font-size:12px;
+  font-weight:600;white-space:nowrap;cursor:pointer}
+.chip.on{background:var(--ink);color:#fff;border-color:var(--ink)}
+
+/* 日历 */
+.cal{background:var(--white);border-radius:var(--r);padding:12px;box-shadow:var(--shadow);border:1px solid var(--line);margin-bottom:14px}
+.cal .ch{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px}
+.cal .ch .mt{font-weight:800;font-size:15px}
+.cal .grid7{display:grid;grid-template-columns:repeat(7,1fr);gap:4px}
+.cal .wd{text-align:center;font-size:10px;color:var(--taupe);padding:2px 0}
+.cal .day{text-align:center;font-size:12px;padding:7px 0;border-radius:9px;cursor:pointer;position:relative}
+.cal .day.dim{color:var(--line)}
+.cal .day.has::after{content:"";position:absolute;bottom:3px;left:50%;transform:translateX(-50%);width:5px;height:5px;border-radius:50%;background:var(--accent)}
+.cal .day.sel{background:var(--ink);color:#fff}
+.cal .day.sel.has::after{background:#fff}
+.cal .day.today{font-weight:800;border:1px solid var(--accent)}
+
+/* 图表 */
+.chart{background:var(--white);border-radius:var(--r);padding:14px;box-shadow:var(--shadow);border:1px solid var(--line);margin-bottom:12px}
+.chart .ct{font-weight:800;font-size:14px;margin-bottom:4px}
+.chart .cs{font-size:11px;color:var(--taupe);margin-bottom:10px}
+.legend{display:flex;gap:14px;font-size:11px;color:var(--taupe);margin-top:8px;flex-wrap:wrap}
+.legend i{display:inline-block;width:10px;height:10px;border-radius:3px;margin-right:4px;vertical-align:middle}
+.suggest{background:#EAF1EC;border-radius:12px;padding:12px 14px;font-size:13px;line-height:1.6}
+.suggest b{color:var(--green)}
+
+/* 相册 */
+.album{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.album .ph{aspect-ratio:1;border-radius:12px;overflow:hidden;background:var(--paper2);cursor:pointer;position:relative}
+.album .ph svg{width:100%;height:100%}
+.album .ph .cap{position:absolute;left:0;right:0;bottom:0;background:rgba(32,38,40,.6);color:#fff;font-size:10px;padding:5px 8px}
+.album.wide .ph.w{grid-column:span 2;aspect-ratio:16/9}
+
+/* 空状态 */
+.empty{text-align:center;padding:34px 20px;color:var(--taupe)}
+.empty svg{width:170px;height:128px;margin-bottom:10px}
+.empty .et{font-weight:700;color:var(--ink);font-size:15px;margin-bottom:5px}
+.empty .ed{font-size:12px;margin-bottom:14px}
+
+/* 成就卡 */
+.ach{display:flex;gap:11px;background:var(--white);border-radius:14px;padding:12px;box-shadow:var(--shadow);
+  border:1px solid var(--line);margin-bottom:10px;align-items:center}
+.ach .badge{width:44px;height:44px;border-radius:12px;background:var(--ink);color:var(--accent);
+  display:flex;align-items:center;justify-content:center;flex:0 0 auto}
+.ach .badge svg{width:24px;height:24px}
+.ach.locked{opacity:.5}
+.ach .bt{font-weight:800;font-size:14px}
+.ach .bd{font-size:11px;color:var(--taupe);margin-top:2px}
+
+/* 弹层 */
+.mask{position:absolute;inset:0;background:rgba(32,38,40,.55);z-index:40;display:flex;align-items:flex-end;justify-content:center}
+.sheet{background:var(--paper);width:100%;max-height:88%;overflow-y:auto;border-radius:20px 20px 0 0;padding:18px 18px 26px;animation:up .22s ease}
+.center-mask{position:absolute;inset:0;background:rgba(32,38,40,.55);z-index:42;display:flex;align-items:center;justify-content:center;padding:24px}
+.dialog{background:var(--white);border-radius:16px;padding:20px;width:100%;max-width:340px;box-shadow:var(--shadow)}
+.dialog .dt{font-weight:800;font-size:16px;margin-bottom:8px}
+.dialog .dd{font-size:13px;color:var(--taupe);line-height:1.6;margin-bottom:16px}
+.dialog .drow{display:flex;gap:10px}
+@keyframes up{from{transform:translateY(40px);opacity:.6}to{transform:translateY(0);opacity:1}}
+@keyframes pop{from{transform:scale(.7);opacity:0}to{transform:scale(1);opacity:1}}
+
+/* 计时器 */
+.timer{text-align:center}
+.timer .ring{width:200px;height:200px;margin:10px auto}
+.timer .tt{font-size:46px;font-weight:800;font-variant-numeric:tabular-nums}
+
+/* Toast */
+.toast{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);background:var(--ink);color:#fff;
+  padding:12px 20px;border-radius:12px;font-size:13px;font-weight:600;z-index:60;animation:pop .2s;display:flex;align-items:center;gap:8px}
+.toast svg{width:18px;height:18px;color:var(--accent)}
+
+/* 删除确认危险强调 */
+.dialog .dd b{color:var(--accent)}
+.related-warn{background:#FFF1EC;border:1px solid var(--accent);border-radius:10px;padding:10px 12px;font-size:12px;margin-bottom:14px;line-height:1.5}
+
+/* 灯箱 */
+.lightbox{position:absolute;inset:0;background:var(--ink);z-index:50;display:flex;flex-direction:column}
+.lightbox .lb-top{padding:14px;display:flex;justify-content:space-between;align-items:center;color:#fff}
+.lightbox .lb-top button{background:none;border:none;color:#fff;cursor:pointer;display:flex}
+.lightbox .lb-img{flex:1;display:flex;align-items:center;justify-content:center;padding:10px}
+.lightbox .lb-img svg{width:100%;height:100%;max-height:560px}
+.lightbox .lb-info{color:#fff;padding:14px 18px 26px}
+
+/* 营养进度卡 */
+.nutri-card{display:flex;align-items:center;gap:14px;background:var(--white);border-radius:var(--r);padding:12px;margin-top:12px;box-shadow:var(--shadow);border:1px solid var(--line)}
+.ring-wrap{position:relative;width:64px;height:64px;flex-shrink:0}
+.p-ring{width:64px;height:64px}
+.p-num{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:16px;color:var(--ink)}
+.nutri-info{flex:1;min-width:0}
+.nutri-info .k{font-size:13px;color:var(--taupe)}
+.nutri-info .v{font-size:22px;font-weight:800;color:var(--ink);margin-top:2px;line-height:1.1}
+.nutri-info .v span{font-size:13px;font-weight:500;color:var(--taupe)}
+.nutri-info .d{font-size:11px;color:var(--accent);margin-top:3px}
+
+/* 动作库与套路（P0） */
+.exlist{display:flex;flex-direction:column;gap:10px;margin-bottom:12px}
+.excard{background:var(--white);border-radius:12px;padding:12px;box-shadow:var(--shadow);border:1px solid var(--line)}
+.excard .eh{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:6px}
+.excard .eh .nm{font-weight:800;font-size:14px}
+.excard .meta{font-size:11px;color:var(--taupe);margin-bottom:6px}
+.excard .note{font-size:12px;color:var(--taupe);line-height:1.5;margin-bottom:8px}
+.routine{background:var(--white);border-radius:12px;padding:12px;box-shadow:var(--shadow);border:1px solid var(--line);margin-bottom:10px}
+.routine .rh{display:flex;align-items:center;justify-content:space-between;gap:10px}
+.routine .rt{font-weight:800;font-size:14px}
+.routine .rm{font-size:11px;color:var(--taupe);margin-top:2px}
+.pr{display:inline-block;background:var(--accent);color:#fff;font-size:10px;font-weight:800;padding:2px 7px;border-radius:20px;margin-left:8px;font-family:inherit}
+.prlist{display:flex;flex-direction:column;gap:6px;margin-top:6px}
+.prrow{display:flex;align-items:center;gap:10px;background:var(--paper2);border-radius:9px;padding:8px 11px;font-size:13px}
+.prrow .nm{font-weight:700;flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.prrow .v{font-weight:800;color:var(--accent);white-space:nowrap}
+.prrow .v small{font-size:10px;color:var(--taupe);font-weight:600}
+.prrow .dt{font-size:10px;color:var(--taupe);white-space:nowrap}
+</style>
+</head>
+<body>
+  <div class="phone" id="phone">
+    <div id="screen"></div>
+    <div id="tabbar" class="tabbar"></div>
+  </div>
+  <script>/* 肌动 · 原创视觉素材库
+ * 全部为内置 SVG，离线可用、无外链、无版权风险。
+ * 主色炭黑 #202628；强调赤陶 #C24B3A；辅助深绿 #3E5C50；纸感 #F4F1EA。
+ */
+(function () {
+  const INK = '#202628';
+  const ACCENT = '#C24B3A';
+  const GREEN = '#3E5C50';
+  const TAUP = '#8A8276';
+  const PAPER = '#F4F1EA';
+
+  // 通用描边风格
+  const line = `fill="none" stroke="${INK}" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"`;
+  const lineA = `fill="none" stroke="${ACCENT}" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"`;
+  const lineG = `fill="none" stroke="${GREEN}" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"`;
+
+  // —— 品牌符号：肌动首字「肌」意象 + 训练日志(哑铃) + 肌肉解剖(肱二头曲线) ——
+  const logo =
+    `<svg viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="肌动">
+      <rect x="6" y="6" width="108" height="108" rx="26" fill="${INK}"/>
+      <g transform="translate(60 60)">
+        <!-- 哑铃横杆 -->
+        <line x1="-34" y1="14" x2="34" y2="14" ${lineA}/>
+        <rect x="-44" y="2" width="12" height="24" rx="4" fill="${PAPER}"/>
+        <rect x="32" y="2" width="12" height="24" rx="4" fill="${PAPER}"/>
+        <rect x="-38" y="-2" width="6" height="32" rx="3" fill="${PAPER}"/>
+        <rect x="32" y="-2" width="6" height="32" rx="3" fill="${PAPER}"/>
+        <!-- 肱二头肌肉曲线（解剖意象） -->
+        <path d="M -20 -34 C -6 -44 14 -40 22 -22 C 26 -12 22 0 10 4" ${line}/>
+        <path d="M -20 -34 C -30 -28 -33 -14 -24 -6" ${line}/>
+        <!-- 训练日志勾选点 -->
+        <circle cx="14" cy="-20" r="5" fill="${ACCENT}"/>
+      </g>
+    </svg>`;
+
+  // —— 应用图标（正方形画布，小尺寸仍清晰）——
+  const icon =
+    `<svg viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="肌动 App">
+      <rect width="1024" height="1024" rx="220" fill="${INK}"/>
+      <g transform="translate(512 512)">
+        <line x1="-300" y1="120" x2="300" y2="120" stroke="${ACCENT}" stroke-width="52" stroke-linecap="round"/>
+        <rect x="-380" y="20" width="100" height="200" rx="34" fill="${PAPER}"/>
+        <rect x="280" y="20" width="100" height="200" rx="34" fill="${PAPER}"/>
+        <rect x="-320" y="-20" width="52" height="280" rx="26" fill="${PAPER}"/>
+        <rect x="268" y="-20" width="52" height="280" rx="26" fill="${PAPER}"/>
+        <path d="M -170 -300 C -60 -400 150 -360 220 -190 C 260 -100 220 30 90 70" fill="none" stroke="${PAPER}" stroke-width="52" stroke-linecap="round" stroke-linejoin="round"/>
+        <path d="M -170 -300 C -270 -240 -300 -100 -210 -50" fill="none" stroke="${PAPER}" stroke-width="52" stroke-linecap="round" stroke-linejoin="round"/>
+        <circle cx="120" cy="-170" r="44" fill="${ACCENT}"/>
+      </g>
+    </svg>`;
+
+  // —— 场景插画：哑铃 ——
+  const dumbbell =
+    `<svg viewBox="0 0 400 300" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid meet">
+      <rect width="400" height="300" fill="${PAPER}"/>
+      <circle cx="60" cy="60" r="40" fill="none" stroke="${TAUP}" stroke-width="3" opacity="0.5"/>
+      <g transform="translate(70 120)">
+        <line x1="0" y1="60" x2="260" y2="60" ${line}/>
+        <rect x="-26" y="14" width="34" height="92" rx="10" fill="${INK}"/>
+        <rect x="252" y="14" width="34" height="92" rx="10" fill="${INK}"/>
+        <rect x="-6" y="30" width="14" height="60" rx="6" fill="${TAUP}"/>
+        <rect x="252" y="30" width="14" height="60" rx="6" fill="${TAUP}"/>
+        <path d="M 60 60 q 70 -40 140 0" ${lineA}/>
+      </g>
+      <text x="200" y="270" text-anchor="middle" font-family="PingFang SC,Microsoft YaHei,sans-serif" font-size="20" fill="${TAUP}">自由重量 · 力量训练</text>
+    </svg>`;
+
+  // —— 场景插画：训练动作连拍（硬拉四连帧）——
+  const sequence =
+    `<svg viewBox="0 0 400 230" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid meet">
+      <rect width="400" height="230" fill="${PAPER}"/>
+      ${[0,1,2,3].map(i=>{
+        const x = 18 + i*96;
+        const lift = [10, 34, 60, 86][i];
+        return `<g transform="translate(${x} 30)">
+          <rect x="0" y="0" width="84" height="170" rx="10" fill="#fff" stroke="${TAUP}" stroke-width="2"/>
+          <!-- 杠铃 -->
+          <line x1="6" y1="${120-lift}" x2="78" y2="${120-lift}" stroke="${INK}" stroke-width="6" stroke-linecap="round"/>
+          <rect x="2" y="${108-lift}" width="10" height="24" rx="3" fill="${INK}"/>
+          <rect x="72" y="${108-lift}" width="10" height="24" rx="3" fill="${INK}"/>
+          <!-- 人物 -->
+          <circle cx="42" cy="${60-lift*0.4}" r="12" fill="${INK}"/>
+          <path d="M 42 ${72-lift*0.4} L 42 110" stroke="${INK}" stroke-width="7" stroke-linecap="round"/>
+          <path d="M 42 ${80-lift*0.4} L 18 ${110-lift}" stroke="${INK}" stroke-width="6" stroke-linecap="round"/>
+          <path d="M 42 ${80-lift*0.4} L 66 ${110-lift}" stroke="${INK}" stroke-width="6" stroke-linecap="round"/>
+          <path d="M 30 170 L 40 118 M 54 170 L 44 118" stroke="${TAUP}" stroke-width="6" stroke-linecap="round"/>
+          <text x="42" y="160" text-anchor="middle" font-size="11" fill="${TAUP}">${['预备','离心','锁定','顶峰'][i]}</text>
+        </g>`;
+      }).join('')}
+    </svg>`;
+
+  // —— 场景插画：餐盘（俯拍减脂餐）——
+  const plate =
+    `<svg viewBox="0 0 400 300" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid meet">
+      <rect width="400" height="300" fill="${PAPER}"/>
+      <circle cx="200" cy="150" r="120" fill="#fff" stroke="${TAUP}" stroke-width="3"/>
+      <circle cx="200" cy="150" r="96" fill="none" stroke="${TAUP}" stroke-width="2" opacity="0.6"/>
+      <!-- 鸡胸 -->
+      <path d="M 150 110 q 40 -20 70 6 q 18 30 -10 52 q -44 16 -64 -12 q -10 -28 4 -46Z" fill="${INK}"/>
+      <!-- 西兰花 -->
+      <g fill="${GREEN}">
+        <circle cx="250" cy="120" r="16"/><circle cx="270" cy="132" r="14"/><circle cx="244" cy="140" r="12"/>
+      </g>
+      <!-- 糙米 -->
+      <g fill="${ACCENT}" opacity="0.85">
+        <circle cx="170" cy="200" r="6"/><circle cx="186" cy="206" r="6"/><circle cx="202" cy="200" r="6"/>
+        <circle cx="160" cy="214" r="6"/><circle cx="178" cy="218" r="6"/><circle cx="196" cy="216" r="6"/>
+      </g>
+      <!-- 番茄 -->
+      <circle cx="250" cy="190" r="14" fill="${ACCENT}"/>
+      <text x="200" y="288" text-anchor="middle" font-size="18" fill="${TAUP}">高蛋白 · 控碳水 · 膳食纤维</text>
+    </svg>`;
+
+  // —— 场景插画：体测曲线（体重/体脂趋势）——
+  const curve =
+    `<svg viewBox="0 0 400 300" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid meet">
+      <rect width="400" height="300" fill="${PAPER}"/>
+      <line x1="50" y1="40" x2="50" y2="250" stroke="${INK}" stroke-width="3"/>
+      <line x1="50" y1="250" x2="370" y2="250" stroke="${INK}" stroke-width="3"/>
+      ${[0,1,2,3,4,5].map(i=>`<line x1="${70+i*54}" y1="40" x2="${70+i*54}" y2="250" stroke="${TAUP}" stroke-width="1" opacity="0.3"/>`).join('')}
+      <!-- 体重曲线 -->
+      <path d="M 70 70 L 124 92 L 178 112 L 232 138 L 286 158 L 340 172" ${lineA}/>
+      <!-- 体脂曲线 -->
+      <path d="M 70 110 L 124 126 L 178 138 L 232 156 L 286 168 L 340 178" ${lineG}/>
+      <circle cx="70" cy="70" r="5" fill="${ACCENT}"/><circle cx="340" cy="172" r="5" fill="${ACCENT}"/>
+      <circle cx="70" cy="110" r="5" fill="${GREEN}"/><circle cx="340" cy="178" r="5" fill="${GREEN}"/>
+      <text x="200" y="288" text-anchor="middle" font-size="16" fill="${TAUP}">体重 ↓ 体脂 ↓ · 12 周趋势</text>
+    </svg>`;
+
+  // —— 场景插画：补水瓶 ——
+  const bottle =
+    `<svg viewBox="0 0 400 300" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid meet">
+      <rect width="400" height="300" fill="${PAPER}"/>
+      <g transform="translate(150 40)">
+        <rect x="20" y="0" width="60" height="22" rx="6" fill="${INK}"/>
+        <rect x="30" y="22" width="40" height="14" fill="${TAUP}"/>
+        <rect x="14" y="36" width="72" height="200" rx="20" fill="#fff" stroke="${INK}" stroke-width="5"/>
+        <!-- 水位 -->
+        <path d="M 18 150 q 32 14 64 0 L 82 232 q -32 14 -64 0 Z" fill="${GREEN}" opacity="0.85"/>
+        <text x="50" y="200" text-anchor="middle" font-size="22" fill="#fff" font-weight="bold">2.1L</text>
+      </g>
+      <text x="200" y="282" text-anchor="middle" font-size="18" fill="${TAUP}">今日补水 · 目标 2.5L</text>
+    </svg>`;
+
+  // —— 场景插画：恢复状态（睡眠/静息）——
+  const recovery =
+    `<svg viewBox="0 0 400 300" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid meet">
+      <rect width="400" height="300" fill="${PAPER}"/>
+      <!-- 静息心率曲线 -->
+      <path d="M 30 150 q 40 -30 80 0 q 40 30 80 0 q 40 -30 80 0 q 40 30 80 0" fill="none" stroke="${GREEN}" stroke-width="5" stroke-linecap="round"/>
+      <!-- 月与休息人形 -->
+      <circle cx="320" cy="70" r="34" fill="${INK}"/>
+      <path d="M 300 70 a 34 34 0 1 0 28 -28" fill="${PAPER}"/>
+      <g transform="translate(120 175)">
+        <circle cx="0" cy="0" r="16" fill="${ACCENT}"/>
+        <path d="M -22 90 q 22 -100 22 -54 q 0 -46 22 0 q 0 -46 22 54 q -22 28 -44 0Z" fill="${INK}"/>
+      </g>
+      <text x="200" y="285" text-anchor="middle" font-size="18" fill="${TAUP}">深睡 1h40m · 静息 52bpm</text>
+    </svg>`;
+
+  // —— 场景插画：户外跑（额外素材）——
+  const run =
+    `<svg viewBox="0 0 400 300" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid meet">
+      <rect width="400" height="300" fill="${PAPER}"/>
+      <line x1="0" y1="230" x2="400" y2="230" stroke="${TAUP}" stroke-width="4"/>
+      <!-- 跑者 -->
+      <g transform="translate(180 90)" fill="${INK}">
+        <circle cx="0" cy="0" r="16"/>
+        <path d="M 0 18 L 6 70" stroke="${INK}" stroke-width="9" stroke-linecap="round"/>
+        <path d="M 0 34 L -34 50" stroke="${INK}" stroke-width="8" stroke-linecap="round"/>
+        <path d="M 2 36 L 40 30" stroke="${INK}" stroke-width="8" stroke-linecap="round"/>
+        <path d="M 4 70 L 36 110" stroke="${INK}" stroke-width="9" stroke-linecap="round"/>
+        <path d="M 4 70 L -22 104" stroke="${INK}" stroke-width="9" stroke-linecap="round"/>
+      </g>
+      <path d="M 60 70 q 60 -20 120 0" stroke="${ACCENT}" stroke-width="4" fill="none"/>
+      <text x="200" y="280" text-anchor="middle" font-size="18" fill="${TAUP}">周末户外跑 · 8km 有氧</text>
+    </svg>`;
+
+  // —— 空状态插画（空器械架 + 伸展人形）——
+  const empty =
+    `<svg viewBox="0 0 400 300" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid meet">
+      <rect width="400" height="300" fill="${PAPER}"/>
+      <g transform="translate(200 150)">
+        <!-- 空哑铃架 -->
+        <rect x="-90" y="40" width="180" height="10" rx="4" fill="${TAUP}"/>
+        <rect x="-80" y="50" width="8" height="50" fill="${TAUP}"/>
+        <rect x="72" y="50" width="8" height="50" fill="${TAUP}"/>
+        <circle cx="-50" cy="30" r="10" fill="none" stroke="${TAUP}" stroke-width="3"/>
+        <circle cx="50" cy="30" r="10" fill="none" stroke="${TAUP}" stroke-width="3"/>
+        <!-- 伸展小人 -->
+        <g fill="${ACCENT}">
+          <circle cx="0" cy="-60" r="14"/>
+          <path d="M 0 -46 L 0 -6" stroke="${ACCENT}" stroke-width="9" stroke-linecap="round"/>
+          <path d="M 0 -34 L -40 -54" stroke="${ACCENT}" stroke-width="8" stroke-linecap="round"/>
+          <path d="M 0 -34 L 40 -54" stroke="${ACCENT}" stroke-width="8" stroke-linecap="round"/>
+          <path d="M 0 -6 L -28 40" stroke="${ACCENT}" stroke-width="9" stroke-linecap="round"/>
+          <path d="M 0 -6 L 28 40" stroke="${ACCENT}" stroke-width="9" stroke-linecap="round"/>
+        </g>
+      </g>
+      <text x="200" y="270" text-anchor="middle" font-size="17" fill="${TAUP}">还没有记录，先从一次训练开始</text>
+    </svg>`;
+
+  // —— 首页主视觉（透明底，叠在炭黑之上，保证白字对比度）——
+  const hero =
+    `<svg viewBox="0 0 400 300" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice">
+      <g transform="translate(255 70)" opacity="0.96">
+        <line x1="-44" y1="120" x2="44" y2="120" stroke="${PAPER}" stroke-width="9" stroke-linecap="round"/>
+        <rect x="-58" y="98" width="15" height="44" rx="4" fill="${PAPER}"/>
+        <rect x="43" y="98" width="15" height="44" rx="4" fill="${PAPER}"/>
+        <rect x="-50" y="104" width="7" height="32" rx="3" fill="${TAUP}"/>
+        <rect x="43" y="104" width="7" height="32" rx="3" fill="${TAUP}"/>
+      </g>
+      <path d="M 250 150 C 300 118 352 150 362 204" fill="none" stroke="${ACCENT}" stroke-width="7" stroke-linecap="round"/>
+      <circle cx="362" cy="204" r="7" fill="${ACCENT}"/>
+      <g opacity="0.45" stroke="${PAPER}" stroke-width="3" fill="none">
+        <path d="M 28 258 q 32 -22 64 0 q 32 22 64 0"/>
+        <path d="M 60 285 q 26 -16 52 0"/>
+      </g>
+      <circle cx="120" cy="60" r="10" fill="none" stroke="${PAPER}" stroke-width="3" opacity="0.5"/>
+    </svg>`;
+
+  // —— 功能图标组（统一线性语言，24x24）——
+  const ic = (p) => `<svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">${p}</svg>`;
+  const icons = {
+    training: ic('<path d="M6 7v10M18 7v10M3 9v6M21 9v6M6 12h12"/>'),           // 哑铃
+    exercise: ic('<circle cx="12" cy="5" r="2"/><path d="M12 7v6m0 0l-4 6m4-6l4 6M8 13h8"/>'), // 动作
+    body: ic('<circle cx="12" cy="5" r="2.4"/><path d="M12 7.4V14m0 0l-3 6m3-6l3 6M7 10h10"/>'), // 体态
+    measure: ic('<path d="M4 4v16h16"/><path d="M8 8h2M8 12h3M8 16h2"/>'),     // 围度/尺
+    diet: ic('<path d="M12 3a9 9 0 0 0 0 18"/><path d="M12 3a9 9 0 0 1 0 18"/><path d="M12 3v18"/>'), // 餐盘
+    sleep: ic('<path d="M21 12.8A7.5 7.5 0 1 1 11.2 3a6 6 0 0 0 9.8 9.8z"/>'), // 月
+    record: ic('<path d="M8 21h8M12 17v4M7 4h10v4a5 5 0 0 1-10 0z"/>'),        // 奖杯
+    calendar: ic('<rect x="3" y="4" width="18" height="17" rx="2"/><path d="M3 9h18M8 2v4M16 2v4"/>'),
+    chart: ic('<path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/>'),
+    media: ic('<rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="9" cy="9" r="2"/><path d="M21 15l-5-5L5 21"/>'),
+    settings: ic('<circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3M5 5l2 2M17 17l2 2M5 19l2-2M17 7l2-2"/>'),
+    add: ic('<path d="M12 5v14M5 12h14"/>'),
+    search: ic('<circle cx="11" cy="11" r="7"/><path d="M21 21l-4-4"/>'),
+    filter: ic('<path d="M3 4h18l-7 8v6l-4 2v-8z"/>'),
+    edit: ic('<path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4z"/>'),
+    trash: ic('<path d="M3 6h18M8 6V4h8v2M6 6l1 14h10l1-14"/>'),
+    check: ic('<path d="M20 6L9 17l-5-5"/>'),
+    timer: ic('<circle cx="12" cy="13" r="8"/><path d="M12 13V9M9 2h6"/>'),
+    water: ic('<path d="M12 3s6 6 6 11a6 6 0 0 1-12 0c0-5 6-11 6-11z"/>'),
+    trophy: ic('<path d="M8 21h8M12 17v4M7 4h10v4a5 5 0 0 1-10 0zM7 5H4v2a3 3 0 0 0 3 3M17 5h3v2a3 3 0 0 1-3 3"/>'),
+    arrow: ic('<path d="M9 6l6 6-6 6"/>'),
+    close: ic('<path d="M6 6l12 12M18 6L6 18"/>'),
+    camera: ic('<path d="M3 8h3l2-3h8l2 3h3v12H3z"/><circle cx="12" cy="13" r="3.5"/>'),
+    sort: ic('<path d="M7 4v16M7 20l-3-3M7 4l3 3M17 20V4M17 4l3 3M17 20l-3-3"/>'),
+    tag: ic('<path d="M3 12l9-9 9 9-9 9z"/><circle cx="14" cy="9" r="1.5"/>'),
+    home: ic('<path d="M3 11l9-8 9 8M5 10v10h14V10"/>'),
+    more: ic('<circle cx="5" cy="12" r="1.6"/><circle cx="12" cy="12" r="1.6"/><circle cx="19" cy="12" r="1.6"/>'),
+    download: ic('<path d="M12 3v12M7 10l5 5 5-5M5 21h14"/>'),
+    bell: ic('<path d="M18 8a6 6 0 0 0-12 0c0 7-3 9-3 9h18s-3-2-3-9M13.7 21a2 2 0 0 1-3.4 0"/>'),
+    share: ic('<circle cx="6" cy="12" r="2.5"/><circle cx="18" cy="6" r="2.5"/><circle cx="18" cy="18" r="2.5"/><path d="M8.2 10.8l7.6-3.6M8.2 13.2l7.6 3.6"/>'),
+  };
+
+  window.ART = {
+    logo, icon, hero, dumbbell, sequence, plate, curve, bottle, recovery, run, empty, icons,
+    coverList: ['dumbbell', 'sequence', 'plate', 'curve', 'bottle', 'recovery', 'run'],
+    svg: function (key) {
+      return ({
+        dumbbell, sequence, plate, curve, bottle, recovery, run, empty
+      })[key] || empty;
+    }
+  };
+})();
+</script>
+  <script>/* 肌动 · 空白初始数据（无示例记录）
+ * 打开即空白工作台，由使用者本人录入自己的真实数据。
+ * persona 为中性占位；categories 为功能分类；
+ * exercises / routines 是 App 内置「动作字典 + 训练套路模板」（功能性工具，非私人示例数据），
+ *   清空数据时随 SEED 复位，可自由增删。
+ */
+(function () {
+  window.SEED = {
+    version: 3,
+    persona: {
+      name: '', age: '', height: '', goal: '', started: '',
+      startWeight: '', startFat: '', waterTarget: 2500, streak: 0,
+      gender: '', activityLevel: 1.375,
+      slogan: '强壮不是口号，是每一次训练留下的证据'
+    },
+    categories: [
+      { key: 'training', label: '训练' },
+      { key: 'exercise', label: '动作' },
+      { key: 'body', label: '体态' },
+      { key: 'measure', label: '围度' },
+      { key: 'diet', label: '饮食' },
+      { key: 'sleep', label: '恢复' },
+      { key: 'record', label: '纪录' }
+    ],
+    // —— 动作字典：家庭哑铃 + 弹力带场景（可增删）——
+    exercises: [
+      { id: 'e1', name: '哑铃平板卧推', muscle: '胸', equipment: '哑铃', sets: 4, reps: 8, rest: 75, note: '主项。沉肩收背，杠铃轨迹落于乳头连线，触胸即推，不弹震。' },
+      { id: 'e2', name: '哑铃上斜卧推', muscle: '胸', equipment: '哑铃', sets: 3, reps: 10, rest: 60, note: '上胸。椅背约 30°，哑铃下放至锁骨两侧，肘部 45° 外展。' },
+      { id: 'e3', name: '哑铃飞鸟', muscle: '胸', equipment: '哑铃', sets: 3, reps: 12, rest: 45, note: '微屈肘，开胸不甩，顶峰挤压胸肌 1 秒。' },
+      { id: 'e4', name: '哑铃站姿肩推', muscle: '肩', equipment: '哑铃', sets: 3, reps: 10, rest: 60, note: '不耸肩，核心收紧，哑铃不过耳外侧，推至头顶微夹。' },
+      { id: 'e5', name: '哑铃侧平举', muscle: '肩', equipment: '哑铃', sets: 3, reps: 12, rest: 45, note: '小重量，肘略高于腕，到肩平即停，避免借力甩。' },
+      { id: 'e6', name: '弹力带面拉', muscle: '肩后束', equipment: '弹力带', sets: 3, reps: 15, rest: 45, note: '改善圆肩。双手外旋至脸同高，挤肩胛骨。' },
+      { id: 'e7', name: '哑铃单臂划船', muscle: '背', equipment: '哑铃', sets: 4, reps: 10, rest: 75, note: '主项。支撑手同侧膝撑凳，背阔主导把哑铃拉向髋。' },
+      { id: 'e8', name: '哑铃俯身划船', muscle: '背', equipment: '哑铃', sets: 3, reps: 12, rest: 60, note: '脊柱中立微前倾，肘贴身向后上拉。' },
+      { id: 'e9', name: '弹力带直臂下压', muscle: '背', equipment: '弹力带', sets: 3, reps: 15, rest: 45, note: '直臂由前上方向下压，背阔收紧，不耸肩。' },
+      { id: 'e10', name: '哑铃二头弯举', muscle: '臂', equipment: '哑铃', sets: 3, reps: 12, rest: 45, note: '肘贴身固定，仅前臂动，顶峰停顿。' },
+      { id: 'e11', name: '哑铃仰卧臂屈伸', muscle: '臂', equipment: '哑铃', sets: 3, reps: 10, rest: 45, note: '大臂固定贴耳，只动前臂下放与举起。' },
+      { id: 'e12', name: '哑铃高脚杯深蹲', muscle: '腿', equipment: '哑铃', sets: 4, reps: 12, rest: 75, note: '主项。哑铃抱于胸前，核心全程收紧，蹲至大腿低于水平。' },
+      { id: 'e13', name: '哑铃罗马尼亚硬拉', muscle: '腿', equipment: '哑铃', sets: 3, reps: 12, rest: 60, note: '髋后推，哑铃沿腿下放，腘绳与臀发力，背挺直。' },
+      { id: 'e14', name: '哑铃分腿箭步蹲', muscle: '腿', equipment: '哑铃', sets: 3, reps: 10, rest: 60, note: '前后分腿，膝盖不内扣，后膝轻触地即起。' },
+      { id: 'e15', name: '弹力带髋外展', muscle: '臀', equipment: '弹力带', sets: 3, reps: 15, rest: 45, note: '侧卧或站姿，臀侧发力外展，改善假胯宽。' },
+      { id: 'e16', name: '哑铃站姿提踵', muscle: '小腿', equipment: '哑铃', sets: 3, reps: 20, rest: 30, note: '全幅起落，顶峰停顿 1 秒。' },
+      { id: 'e17', name: '平板支撑', muscle: '核心', equipment: '徒手', sets: 3, reps: 60, rest: 45, note: '腰不塌不弓，腹主动收缩，呼吸平稳。' },
+      { id: 'e18', name: '卷腹', muscle: '核心', equipment: '徒手', sets: 3, reps: 15, rest: 45, note: '下背贴地，靠腹卷起肩胛离地，不拽脖子。' }
+    ],
+    // —— 训练套路模板：三分化（每周 3 天）——
+    routines: [
+      { id: 'r1', name: '推日 · 胸肩三头', split: '推', items: [
+        { exId: 'e1', sets: 4, reps: 8, rest: 75 }, { exId: 'e2', sets: 3, reps: 10, rest: 60 },
+        { exId: 'e3', sets: 3, reps: 12, rest: 45 }, { exId: 'e4', sets: 3, reps: 10, rest: 60 },
+        { exId: 'e11', sets: 3, reps: 10, rest: 45 } ] },
+      { id: 'r2', name: '拉日 · 背二头后束', split: '拉', items: [
+        { exId: 'e7', sets: 4, reps: 10, rest: 75 }, { exId: 'e8', sets: 3, reps: 12, rest: 60 },
+        { exId: 'e6', sets: 3, reps: 15, rest: 45 }, { exId: 'e10', sets: 3, reps: 12, rest: 45 },
+        { exId: 'e9', sets: 3, reps: 15, rest: 45 } ] },
+      { id: 'r3', name: '腿日 · 腿臀核心', split: '腿', items: [
+        { exId: 'e12', sets: 4, reps: 12, rest: 75 }, { exId: 'e13', sets: 3, reps: 12, rest: 60 },
+        { exId: 'e14', sets: 3, reps: 10, rest: 60 }, { exId: 'e15', sets: 3, reps: 15, rest: 45 },
+        { exId: 'e16', sets: 3, reps: 20, rest: 30 }, { exId: 'e17', sets: 3, reps: 60, rest: 45 } ] }
+    ],
+    records: [],
+    media: [],
+    activities: [],
+    achievements: [],
+    reminders: [],
+    settings: { reminderOn: false, storeNote: '数据保存在本机浏览器（localStorage），清除浏览器数据会丢失。' }
+  };
+})();
+</script>
+  <script>/* 肌动 · 应用逻辑（单端移动工作台）
+ * 路由 / 状态 / CRUD / 筛选搜索排序 / 日历 / 图表 / 计时 / 上传 / 成就联动 / 本地存储
+ */
+(function () {
+  'use strict';
+  const ART = window.ART, SEED = window.SEED;
+  const STORE = 'jidong_v1';
+  const $=s=>document.querySelector(s), $$=s=>Array.from(document.querySelectorAll(s));
+  const esc=s=>(s==null?'':String(s)).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+  const ic=k=>(ART.icons[k]||'');
+  const clone=o=>JSON.parse(JSON.stringify(o));
+
+  const TYPE={
+    training:{label:'训练',icon:'training',cover:'dumbbell'},
+    exercise:{label:'动作',icon:'exercise',cover:'sequence'},
+    body:{label:'体态',icon:'body',cover:'curve'},
+    measure:{label:'围度',icon:'measure',cover:'curve'},
+    diet:{label:'饮食',icon:'diet',cover:'plate'},
+    sleep:{label:'恢复',icon:'sleep',cover:'recovery'},
+    record:{label:'纪录',icon:'record',cover:'dumbbell'}
+  };
+  const STLABEL={doing:'进行中',done:'已完成',todo:'待办'};
+
+  // —— 状态 ——
+  let state=null, filter={q:'',type:'',status:'',tag:'',sort:'date'}, wiz=null, timer=null, form=null;
+  function save(){try{localStorage.setItem(STORE,JSON.stringify(state));}catch(e){}}
+  function load(){try{const s=localStorage.getItem(STORE);return s?JSON.parse(s):null;}catch(e){return null;}}
+  function initState(){state=load()||clone(SEED);if(!state.exercises)state.exercises=clone(SEED.exercises);if(!state.routines)state.routines=clone(SEED.routines);
+    const P=state.persona||(state.persona={});
+    if(P.gender===undefined)P.gender='';
+    if(P.activityLevel===undefined)P.activityLevel=1.375;
+    if(P.waterTarget===undefined)P.waterTarget=2500;
+    save();}
+  initState();
+
+  // —— 工具 ——
+  function vol(exs){return (exs||[]).reduce((s,e)=>s+(+e.sets||0)*(+e.reps||0)*(+e.weight||0),0);}
+  function coverHTML(rec){
+    if(rec&&typeof rec.cover==='string'&&rec.cover.indexOf('data:')===0)
+      return `<img src="${rec.cover}" style="width:100%;height:100%;object-fit:cover" onerror="this.outerHTML=ART.empty">`;
+    return ART.svg((rec&&rec.cover)||'empty');
+  }
+  function mediaSVG(item){
+    if(item&&item.dataUrl) return `<img src="${item.dataUrl}" style="width:100%;height:100%;object-fit:cover" onerror="this.outerHTML=ART.empty">`;
+    return ART.svg((item&&item.key)||'empty');
+  }
+  function parseNum(v){const m=String(v).match(/-?\d+(\.\d+)?/);return m?parseFloat(m[0]):-1;}
+  function recNumber(rec){
+    const f=rec.fields||{}, P=state.persona;
+    switch(rec.type){
+      case 'training':return{v:(f.duration||0)+'′',s:f.plan?'计划时长':'训练时长'};
+      case 'exercise':return{v:f.bodyPart||'—',s:'部位'};
+      case 'body':return{v:(f.weight||0)+'kg',s:'体重'};
+      case 'measure':return{v:(f.waist||0)+'cm',s:'腰围'};
+      case 'diet':return f.water?{v:(f.water/1000).toFixed(1)+'L',s:'饮水'}:{v:(f.kcal||0)+'kcal',s:'热量'};
+      case 'sleep':return{v:(f.total||0)+'h',s:'睡眠'};
+      case 'record':return{v:(f.value||0),s:f.metric||'纪录'};
+    }
+    return{v:'—',s:''};
+  }
+  function todayStr(){const d=new Date();return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');}
+  // —— 营养目标（单机 TDEE 估算）——
+  function currentWeight(){const b=state.records.filter(r=>r.type==='body').sort((a,b)=>a.date<b.date?1:-1);const w=(b[0]||{}).fields;return w&&w.weight?(+w.weight):(+state.persona.startWeight||0);}
+  function tdee(){const P=state.persona;const w=currentWeight();if(!P.gender||!P.age||!P.height||!w)return null;const bmr=10*w+6.25*P.height-5*P.age+(P.gender==='男'?5:-161);return Math.round(bmr*(P.activityLevel||1.375));}
+  function calorieTarget(){const t=tdee();return t?Math.round(t-400):null;}
+  function proteinTarget(){const w=currentWeight();return w?Math.round(1.8*w):0;}
+  function fmtDate(d){if(!d)return'';const a=d.split('-');return a[1]+'/'+a[2];}
+  function byDate(){return state.records.slice().sort((a,b)=>a.date<b.date?1:-1);}
+
+  // —— 渲染外壳 ——
+  function tabbar(route){
+    const items=[['home','首页','home'],['records','记录库','filter'],['plan','计划','calendar'],
+      ['insight','洞察','chart'],['settings','设置','settings']];
+    return items.map(it=>`<button class="tab ${route.indexOf(it[0])===0?'on':''}" data-act="nav" data-route="${it[0]}">
+      <span>${ic(it[2])}</span>${it[1]}</button>`).join('');
+  }
+
+  function render(){
+    const hash=location.hash.replace('#/','')||'home';
+    const route=hash.split('/')[0];
+    let html='';
+    if(route==='home')html=viewHome();
+    else if(route==='records')html=viewRecords();
+    else if(route==='plan')html=viewPlan();
+    else if(route==='insight')html=viewInsight();
+    else if(route==='media')html=viewMedia();
+    else if(route==='settings')html=viewSettings();
+    else if(route==='detail')html=viewDetail(hash.split('/')[1]);
+    else if(route==='add')html=viewAdd();
+    else if(route==='exercises')html=viewExercises();
+    else if(route==='edit')html=viewEdit(hash.split('/')[1]);
+    else if(route==='report')html=viewReport();
+    else html=viewHome();
+    const screen=$('#screen');
+    screen.innerHTML=html;
+    $('#tabbar').innerHTML=tabbar(route);
+    screen.scrollTop=0;
+    closeOverlays();
+  }
+
+  // —— 首页 ——
+  function viewHome(){
+    const P=state.persona;
+    const recs=state.records;
+    const bodyRecs=recs.filter(r=>r.type==='body').sort((a,b)=>a.date<b.date?1:-1);
+    const lastBody=bodyRecs[0];
+    const today=todayStr();
+    const todays=recs.filter(r=>r.date===today);
+    const todos=todays.filter(r=>r.status!=='done');
+    const doneToday=todays.filter(r=>r.status==='done').length;
+    const wa=new Date(today);wa.setDate(wa.getDate()-6);const was=wa.toISOString().slice(0,10);
+    const trainWeek=recs.filter(r=>r.type==='training'&&r.status==='done'&&r.date>=was).length;
+    const recent=byDate().slice(0,6);
+    // 今日蛋白 / 热量目标进度
+    const dietP=recs.filter(r=>r.type==='diet'&&r.date===today).reduce((s,r)=>s+(+((r.fields||{}).protein)||0),0);
+    const pT=proteinTarget();
+    const pPct=pT?Math.min(100,Math.round(dietP/pT*100)):0;
+    const nutriHtml=pT?`<div class="nutri-card">
+        <div class="ring-wrap"><svg viewBox="0 0 100 100" class="p-ring">
+          <circle cx="50" cy="50" r="42" fill="none" stroke="#EAE5DA" stroke-width="10"/>
+          <circle cx="50" cy="50" r="42" fill="none" stroke="#C24B3A" stroke-width="10" stroke-linecap="round"
+            stroke-dasharray="264" stroke-dashoffset="${(264*(1-pPct/100)).toFixed(0)}" transform="rotate(-90 50 50)"/></svg>
+          <div class="p-num">${pPct}%</div></div>
+        <div class="nutri-info"><div class="k">今日蛋白</div>
+          <div class="v">${dietP}<span> / ${pT} g</span></div>
+          <div class="d">${dietP>=pT?'已达标 · 保肌稳线':'距目标还差 '+(pT-dietP)+'g'}</div></div>
+      </div>`
+      :`<div class="nutri-card" data-act="nav" data-route="settings" style="cursor:pointer">
+        <div class="ring-wrap" style="background:rgba(194,75,58,.08);border-radius:50%;display:flex;align-items:center;justify-content:center"><span style="color:var(--accent);font-size:26px">+</span></div>
+        <div class="nutri-info"><div class="k">今日蛋白</div>
+          <div class="v" style="font-size:15px;color:var(--accent)">设置目标</div>
+          <div class="d">去档案填身高/体重，自动估算蛋白目标</div></div></div>`;
+    // 体重趋势 mini
+    const pts=bodyRecs.map(r=>r.fields.weight);
+    const wmin=Math.min(...pts)-1,wmax=Math.max(...pts)+1;
+    const linePts=bodyRecs.map((r,i)=>`${(i/(pts.length-1)*300+10).toFixed(0)},${(70-(r.fields.weight-wmin)/(wmax-wmin)*60).toFixed(0)}`).join(' ');
+
+    const hero=`<section class="hero">
+      ${ART.hero}
+      <div class="overlay">
+        <div>
+          <span class="tag">${esc(P.goal||'我的目标')} · ${P.started?('第 '+Math.max(0,Math.round((new Date(today)-new Date(P.started))/864e5))+' 天'):'今天开始'}</span>
+          <div class="big">${P.streak||0}<small> 天</small></div>
+          <div class="lead">连续训练 · 肌肉正在记住每一次努力</div>
+        </div>
+        <div class="cta">
+          <button class="btn btn-primary" data-act="open-today-train">开始今日训练</button>
+          <button class="btn btn-ghost" data-act="open-add">记一笔</button>
+        </div>
+      </div>
+    </section>`;
+
+    const todosHtml=todos.length?todos.map(r=>`<div class="todo" data-act="open-detail" data-id="${r.id}">
+        <div class="chk">${ic('check')}</div>
+        <div class="body"><div class="tt">${esc(r.title)}</div>
+        <div class="mt">${fmtDate(r.date)} · ${TYPE[r.type].label} · ${STLABEL[r.status]}</div></div>
+        <span class="status st-${r.status}">${STLABEL[r.status]}</span></div>`).join('')
+      :`<div class="empty">${ART.empty}<div class="et">今日事项已清空</div><div class="ed">点「记一笔」安排新的训练或记录</div>
+        <button class="btn btn-line btn-sm" data-act="open-add">记一笔</button></div>`;
+
+    const quick=[['open-add','新增记录','add'],['open-timer','开始计时','timer'],
+      ['open-today-train','完成训练','check'],['open-upload','上传素材','camera']];
+
+    const stats=`<div class="statrow">
+      <div class="stat"><div class="k">近 7 天训练</div><div class="v">${trainWeek}<small> 次</small></div><div class="d">完成后自动累计</div></div>
+      <div class="stat"><div class="k">当前体重</div><div class="v">${lastBody?lastBody.fields.weight:'—'}<small> kg</small></div><div class="d">${lastBody&&P.startWeight?('较目标 -'+(P.startWeight-lastBody.fields.weight).toFixed(1)):'记录后显示'}</div></div>
+      ${lastBody?'<div class="stat"><div class="k">体脂</div><div class="v">'+lastBody.fields.fat+'<small> %</small></div><div class="d">持续监测</div></div>':'<div class="stat" data-act="open-add-body" style="cursor:pointer"><div class="k">体脂</div><div class="v" style="font-size:15px;color:var(--accent)">+ 记一次</div><div class="d">点此测体态</div></div>'}
+    </div>`;
+
+    const recentHtml=recent.length?recent.map(r=>`<div class="card" data-act="open-detail" data-id="${r.id}">
+      <div class="cov">${coverHTML(r)}</div>
+      <div class="ttl">${esc(r.title)}</div>
+      <div class="meta"><span class="tagchip">${TYPE[r.type].label}</span><span>${fmtDate(r.date)}</span>
+      <span class="status st-${r.status}">${STLABEL[r.status]}</span></div></div>`).join('')
+      :`<div class="empty" style="grid-column:1/-1"><div class="ed">还没有记录</div><button class="btn btn-line btn-sm" data-act="open-add">记第一笔</button></div>`;
+
+    const ach=state.achievements.filter(a=>a.earned).slice(0,3);
+
+    return `<div class="topbar">
+        <div class="brand"><div class="mark">${ART.logo}</div>
+          <div><div class="name">肌动</div><div class="sub">${esc(P.slogan)}</div></div></div>
+        <div class="topdate">${today.replace(/-/g,'.')}<br>${['日','一','二','三','四','五','六'][new Date(today).getDay()]} · ${esc(P.name||'我')}</div>
+      </div>
+      ${hero}
+      <div class="section">
+        <div class="section-head"><div class="t">今日事项</div><div class="cap">${todays.length?doneToday+'/'+todays.length+' 完成':'今日暂无安排'}</div></div>
+        ${todosHtml}
+      </div>
+      <div class="section"><div class="section-head"><div class="t">核心数据</div>
+        <a data-act="nav" data-route="insight">查看洞察 ${ic('arrow')}</a></div>${stats}
+        ${nutriHtml}
+        <div class="card" style="margin-top:12px;padding:12px">
+          <div class="cap">体重趋势（数据来源：体态记录 ${bodyRecs.length} 条）</div>
+          ${bodyRecs.length>=2?`<svg viewBox="0 0 300 60" style="width:100%;height:64px;margin-top:6px">${(function(){const pts=bodyRecs.map(r=>r.fields.weight);const wmin=Math.min(...pts)-1,wmax=Math.max(...pts)+1;return `<polyline points="${bodyRecs.map((r,i)=>`${(i/(pts.length-1)*280+10).toFixed(0)},${(55-(r.fields.weight-wmin)/(wmax-wmin)*45).toFixed(0)}`).join(' ')}" fill="none" stroke="#C24B3A" stroke-width="3"/>`+bodyRecs.map((r,i)=>`<circle cx="${(i/(pts.length-1)*280+10).toFixed(0)}" cy="${(55-(r.fields.weight-wmin)/(wmax-wmin)*45).toFixed(0)}" r="3" fill="#C24B3A"/>`).join('');})()}</svg>`:'<div class="ed" style="margin-top:8px">记录至少 2 次体态测量后，这里会显示体重趋势。</div>'}
+        </div></div>
+      <div class="section"><div class="section-head"><div class="t">快捷操作</div></div>
+        <div class="quick">${quick.map(q=>`<div class="q" data-act="${q[0]}"><span class="ic">${ic(q[2])}</span><span class="lb">${q[1]}</span></div>`).join('')}</div></div>
+      <div class="section"><div class="section-head"><div class="t">最近内容</div>
+        <a data-act="nav" data-route="records">全部 ${ic('arrow')}</a></div>
+        <div class="hscroll">${recentHtml}</div></div>
+      <div class="section"><div class="section-head"><div class="t">阶段成果</div>
+        <a data-act="nav" data-route="report">报告 ${ic('arrow')}</a></div>
+        ${ach.length?ach.map(a=>`<div class="ach"><div class="badge">${ic(a.icon)}</div>
+          <div><div class="bt">${esc(a.title)}</div><div class="bd">${esc(a.desc)} · ${fmtDate(a.date)}</div></div></div>`).join('')
+        :`<div class="empty" style="padding:16px"><div class="ed">还没有成就</div><div class="ed">完成训练、达成目标后会自动点亮</div></div>`}
+      </div>`;
+  }
+
+  // —— 记录库 ——
+  function viewRecords(){
+    let list=state.records.slice();
+    if(filter.q){const q=filter.q.toLowerCase();list=list.filter(r=>r.title.toLowerCase().includes(q)||(r.tags||[]).join(' ').toLowerCase().includes(q));}
+    if(filter.type)list=list.filter(r=>r.type===filter.type);
+    if(filter.status)list=list.filter(r=>r.status===filter.status);
+    if(filter.sort==='date')list.sort((a,b)=>a.date<b.date?1:-1);else list.sort((a,b)=>parseNum(recNumber(a).v)<parseNum(recNumber(b).v)?1:-1);
+    const typeChips=['',...state.categories.map(c=>c.key)];
+    const stChips=['', 'todo','doing','done'];
+    const cards=list.length?list.map(r=>{const n=recNumber(r);return `<div class="card" data-act="open-detail" data-id="${r.id}">
+        <div class="cov">${coverHTML(r)}</div>
+        <div class="ttl">${esc(r.title)}</div>
+        <div class="meta"><span class="tagchip">${TYPE[r.type].label}</span><span>${fmtDate(r.date)}</span>
+        <span class="status st-${r.status}">${STLABEL[r.status]}</span></div>
+        <div class="meta" style="margin-top:6px"><b class="num">${esc(n.v)}</b><span class="micro">${n.s}</span></div>
+      </div>`;}).join('')
+      :`<div class="empty">${ART.empty}<div class="et">没有匹配的记录</div>
+        <div class="ed">调整筛选条件，或新增一条</div>
+        <button class="btn btn-line btn-sm" data-act="clear-filter">清除筛选</button>
+        <button class="btn btn-primary btn-sm" data-act="open-add" style="margin-left:8px">新增记录</button></div>`;
+    return `<div class="topbar"><div class="brand"><div class="mark">${ART.logo}</div>
+        <div><div class="name">记录库</div><div class="sub">${state.records.length} 条 · 全部轨迹</div></div></div>
+      <div class="topdate">${filter.q?'筛选中':'全部'}<br>点击卡片看详情</div></div>
+      <div class="section">
+        <div class="search">${ic('search')}<input placeholder="搜索标题或标签" value="${esc(filter.q)}" data-act="search-input">
+          <span data-act="open-filter" style="cursor:pointer;color:var(--accent)">${ic('filter')}</span></div>
+        <div class="chips" style="margin-top:10px">
+          ${typeChips.map(t=>`<span class="chip ${filter.type===t?'on':''}" data-act="chip-type" data-v="${t}">${t?TYPE[t].label:'全部'}</span>`).join('')}
+        </div>
+        <div class="chips" style="margin-top:6px">
+          ${stChips.map(s=>`<span class="chip ${filter.status===s?'on':''}" data-act="chip-status" data-v="${s}">${s?STLABEL[s]:'全部状态'}</span>`).join('')}
+        </div>
+        <div class="filterbar" style="margin-top:8px;justify-content:space-between">
+          <span class="cap">共 ${list.length} 条</span>
+          <span class="cap" data-act="chip-sort" style="cursor:pointer;color:var(--accent)">排序：${filter.sort==='date'?'日期↓':'数值↓'} ${ic('sort')}</span>
+        </div>
+        <div class="grid c2">${cards}</div>
+      </div>`;
+  }
+
+  // —— 计划 / 日历 ——
+  function viewPlan(){
+    const cal=state._cal||{y:new Date().getFullYear(),m:new Date().getMonth()};
+    const y=cal.y,m=cal.m;
+    const first=new Date(y,m,1).getDay();const days=new Date(y,m+1,0).getDate();
+    const have={};state.records.forEach(r=>{have[r.date]=(have[r.date]||0)+1;});
+    let cells='';for(let i=0;i<first;i++)cells+=`<div class="day dim"></div>`;
+    for(let d=1;d<=days;d++){const ds=`${y}-${String(m+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
+      const isT=ds===todayStr();const sel=state._selDate===ds;
+      cells+=`<div class="day ${isT?'today':''} ${have[ds]?'has':''} ${sel?'sel':''}" data-act="pick-day" data-d="${ds}">${d}</div>`;}
+    const sel=state._selDate||todayStr();
+    const dayRecs=state.records.filter(r=>r.date===sel).sort((a,b)=>a.time<b.time?-1:1);
+    const plans=state.records.filter(r=>r.status!=='done'&&r.date>=todayStr()).sort((a,b)=>a.date<b.date?1:-1);
+    const dayHtml=dayRecs.length?dayRecs.map(r=>`<div class="todo" data-act="open-detail" data-id="${r.id}">
+        <div class="chk ${r.status==='done'?'':''}">${r.status==='done'?ic('check'):''}</div>
+        <div class="body"><div class="tt">${esc(r.title)}</div><div class="mt">${r.time} · ${TYPE[r.type].label} · ${STLABEL[r.status]}</div></div>
+        <span class="status st-${r.status}">${STLABEL[r.status]}</span></div>`).join('')
+      :`<div class="empty" style="padding:18px"><div class="ed">这一天还没有安排</div>
+        <button class="btn btn-line btn-sm" data-act="open-add">添加记录</button></div>`;
+    return `<div class="topbar"><div class="brand"><div class="mark">${ART.logo}</div>
+        <div><div class="name">计划</div><div class="sub">日历视图 · 训练与安排</div></div></div>
+      <div class="topdate">点击日期<br>查看当天</div></div>
+      <div class="section">
+        <div class="cal">
+          <div class="ch"><button class="btn btn-line btn-sm" data-act="cal-prev">‹</button>
+            <div class="mt">${y} 年 ${m+1} 月</div>
+            <button class="btn btn-line btn-sm" data-act="cal-next">›</button></div>
+          <div class="grid7">${['日','一','二','三','四','五','六'].map(w=>`<div class="wd">${w}</div>`).join('')}</div>
+          <div class="grid7" style="margin-top:4px">${cells}</div>
+        </div>
+        <div class="section-head"><div class="t">${fmtDate(sel)} 安排</div></div>
+        ${dayHtml}
+      </div>
+      <div class="section"><div class="section-head"><div class="t">我的套路</div>
+        <a data-act="nav" data-route="exercises">动作库 ${ic('arrow')}</a></div>
+        ${state.routines.length?state.routines.map(rt=>`<div class="routine">
+          <div class="rh"><div><div class="rt">${esc(rt.name)}</div>
+            <div class="rm">${esc(rt.split)} · ${rt.items.length} 个动作</div></div>
+          <button class="btn btn-primary btn-sm" data-act="open-routine" data-id="${rt.id}">开练</button></div></div>`).join('')
+          :'<div class="ed">还没有套路模板，去动作库组合你的训练。</div>'}
+      </div>
+      <div class="section"><div class="section-head"><div class="t">未来计划</div></div>
+        ${plans.length?plans.map(r=>`<div class="card" data-act="open-detail" data-id="${r.id}">
+          <div class="cov" style="aspect-ratio:16/6">${coverHTML(r)}</div>
+          <div class="ttl">${esc(r.title)}</div>
+          <div class="meta"><span class="tagchip">${fmtDate(r.date)}</span><span class="status st-${r.status}">${STLABEL[r.status]}</span></div>
+        </div>`).join(''):`<div class="empty" style="padding:14px"><div class="ed">暂无未来计划</div></div>`}
+      </div>`;
+  }
+
+  // —— 数据洞察 ——
+  function viewInsight(){
+    const range=state._range||'week';
+    const now=new Date(todayStr());
+    let from;if(range==='week'){from=new Date(now);from.setDate(now.getDate()-6);}
+    else if(range==='month'){from=new Date(now);from.setDate(now.getDate()-29);}
+    else {const earliest=state.records.slice().sort((a,b)=>a.date<b.date?-1:1)[0];from=new Date(earliest?earliest.date:todayStr());}
+    const fromS=from.toISOString().slice(0,10);
+    const inRange=r=>r.date>=fromS&&r.date<=todayStr();
+    const recs=state.records.filter(inRange);
+    // 完成趋势（按周）
+    const weeks={};recs.filter(r=>r.status==='done').forEach(r=>{const d=new Date(r.date);const wk=Math.floor((d-from)/6048e5);weeks[wk]=(weeks[wk]||0)+1;});
+    const wkKeys=Object.keys(weeks).sort((a,b)=>a-b);
+    const maxWk=Math.max(1,...wkKeys.map(k=>weeks[k]));
+    const bars=wkKeys.map(k=>`<div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:4px">
+      <div style="width:60%;background:var(--accent);height:${(weeks[k]/maxWk*90).toFixed(0)}px;border-radius:5px 5px 0 0"></div>
+      <div class="micro">W${+k+1}</div></div>`).join('')||`<div class="micro">该区间暂无完成记录</div>`;
+    // 分类占比
+    const dist={};recs.forEach(r=>dist[r.type]=(dist[r.type]||0)+1);
+    const total=recs.length||1;const palette={training:'#C24B3A',exercise:'#3E5C50',body:'#8A8276',measure:'#B08D57',diet:'#C24B3A',sleep:'#3E5C50',record:'#202628'};
+    let acc=0;const segs=Object.keys(dist).map(t=>{const v=dist[t]/total*100;const seg=`<span style="width:${v}%;background:${palette[t]||'#999'}"></span>`;acc+=v;return seg;}).join('');
+    const legend=Object.keys(dist).map(t=>`<span><i style="background:${palette[t]}"></i>${TYPE[t].label} ${dist[t]}</span>`).join('');
+    // 体重变化（周平均，平滑每日波动）
+    const body=state.records.filter(r=>r.type==='body').sort((a,b)=>a.date<b.date?-1:1);
+    const inB=body.filter(inRange);
+    const byWeekW={};body.forEach(r=>{const d=new Date(r.date);const wk=Math.floor((d-from)/6048e5);if(wk<0)return;(byWeekW[wk]=byWeekW[wk]||[]).push(+r.fields.weight);});
+    const wkArr=Object.keys(byWeekW).sort((a,b)=>a-b).map(k=>({wk:+k,w:+(byWeekW[k].reduce((s,x)=>s+x,0)/byWeekW[k].length).toFixed(1)}));
+    const bp=wkArr.map(o=>o.w);const bmn=Math.min(...bp,99),bmx=Math.max(...bp,0);
+    const bpts=wkArr.map((o,i)=>`${(i/(Math.max(1,bp.length-1))*280+10).toFixed(0)},${(70-(o.w-bmn)/(bmx-bmn||1)*60).toFixed(0)}`).join(' ');
+    const firstW=inB[0]?inB[0].fields.weight:null,lastW=inB[inB.length-1]?inB[inB.length-1].fields.weight:null;
+    // 营养汇总（区间内饮食记录）
+    const dietRecs=recs.filter(r=>r.type==='diet'&&r.fields);
+    const sumK=dietRecs.reduce((s,r)=>s+(+r.fields.kcal||0),0);
+    const sumP=dietRecs.reduce((s,r)=>s+(+r.fields.protein||0),0);
+    const sumC=dietRecs.reduce((s,r)=>s+(+r.fields.carb||0),0);
+    const sumF=dietRecs.reduce((s,r)=>s+(+r.fields.fat||0),0);
+    const dayCount=new Set(dietRecs.map(r=>r.date)).size||1;
+    const ct=calorieTarget();const avgK=Math.round(sumK/dayCount);const deficit=ct?Math.round(ct-avgK):null;
+    const kP=sumP*4,kC=sumC*4,kF=sumF*9,kTot=kP+kC+kF||1;
+    const pPct=Math.round(kP/kTot*100),cPct=Math.round(kC/kTot*100),fPct=Math.max(0,100-pPct-cPct);
+    const sug=[];
+    if(lastW!=null&&firstW!=null&&lastW<firstW)sug.push(`近 ${range==='week'?'一周':range==='month'?'一月':'全程'}体重下降 <b>${(firstW-lastW).toFixed(1)}kg</b>，减脂节奏健康。`);
+    if(deficit!=null&&deficit>=0)sug.push(`日均热量缺口 <b>${deficit}kcal</b>，脂肪在稳定消耗。`);
+    const water=state.records.filter(r=>r.type==='diet'&&r.fields&&r.fields.water).sort((a,b)=>a.date<b.date?1:-1)[0];if(water&&water.fields.water<state.persona.waterTarget)sug.push(`最近一次饮水 ${(water.fields.water/1000).toFixed(1)}L，距目标还差 <b>${((state.persona.waterTarget-water.fields.water)/1000).toFixed(1)}L</b>，记得补水。`);
+    if(state.persona.streak>=21)sug.push(`连续训练 <b>${state.persona.streak} 天</b>，神经适应良好，可维持当前分化。`);
+    return `<div class="topbar"><div class="brand"><div class="mark">${ART.logo}</div>
+        <div><div class="name">数据洞察</div><div class="sub">看得见的变化</div></div></div>
+      <div class="topdate">${range==='week'?'本周':range==='month'?'本月':'全程'}<br>数据联动</div></div>
+      <div class="section">
+        <div class="chips">${[['week','本周'],['month','本月'],['all','全程']].map(r=>`<span class="chip ${range===r[0]?'on':''}" data-act="set-range" data-v="${r[0]}">${r[1]}</span>`).join('')}</div>
+        <div class="chart"><div class="ct">完成趋势</div><div class="cs">数据来源：区间内状态为「已完成」的记录（共 ${wkKeys.reduce((s,k)=>s+weeks[k],0)} 条）</div>
+          <div style="display:flex;align-items:flex-end;height:110px;gap:6px;padding:0 4px">${bars}</div></div>
+        <div class="chart"><div class="ct">分类占比</div><div class="cs">数据来源：区间内全部记录 ${recs.length} 条</div>
+          <div style="display:flex;height:18px;border-radius:9px;overflow:hidden;margin:6px 0">${segs}</div>
+          <div class="legend">${legend}</div></div>
+        <div class="chart"><div class="ct">体重趋势（周平均）</div><div class="cs">数据来源：体态记录 ${body.length} 条（按周平均，平滑每日波动）</div>
+          <svg viewBox="0 0 300 80" style="width:100%;height:90px">${wkArr.length>1?`<polyline points="${bpts}" fill="none" stroke="#C24B3A" stroke-width="3"/>`:''}
+          ${wkArr.map((o,i)=>`<circle cx="${(i/(Math.max(1,bp.length-1))*280+10).toFixed(0)}" cy="${(70-(o.w-bmn)/(bmx-bmn||1)*60).toFixed(0)}" r="3" fill="#C24B3A"/>`).join('')}</svg>
+          <div class="legend"><span><i style="background:#C24B3A"></i>体重 ${firstW!=null?firstW+'→'+lastW+'kg':'—'}</span></div></div>
+        <div class="chart"><div class="ct">宏量营养素分布</div><div class="cs">数据来源：区间饮食 ${dietRecs.length} 条（按热量当量 4/4/9 kcal/g）</div>
+          ${dietRecs.length?`<div style="display:flex;height:18px;border-radius:9px;overflow:hidden;margin:6px 0">
+            <span style="width:${pPct}%;background:#C24B3A"></span><span style="width:${cPct}%;background:#3E5C50"></span><span style="width:${fPct}%;background:#B08D57"></span></div>
+            <div class="legend"><span><i style="background:#C24B3A"></i>蛋白 ${pPct}% · ${sumP}g</span><span><i style="background:#3E5C50"></i>碳水 ${cPct}% · ${sumC}g</span><span><i style="background:#B08D57"></i>脂肪 ${fPct}% · ${sumF}g</span></div>`
+            :'<div class="ed" style="margin-top:6px">记录饮食后，这里会显示蛋白 / 碳水 / 脂肪的比例。</div>'}
+        </div>
+        <div class="chart"><div class="ct">热量缺口（减脂）</div><div class="cs">数据来源：区间饮食 ${dietRecs.length} 天 · 目标 ${ct?ct+' kcal/天':'未设定'}</div>
+          ${dietRecs.length&&ct?`<div class="kv"><span class="k">日均摄入</span><span class="v">${avgK} kcal</span></div>
+            <div class="kv"><span class="k">目标热量</span><span class="v">${ct} kcal</span></div>
+            <div class="kv"><span class="k">日均缺口</span><span class="v" style="color:${deficit>=0?'var(--accent)':'#C0392B'}">${deficit>=0?'+':''}${deficit} kcal</span></div>
+            <div class="d" style="margin-top:6px">${deficit>=0?'缺口合理，脂肪在稳定消耗；体重多看周平均线，别被单日波动带偏。':'摄入超目标，适当减少碳水或脂肪，回到减脂区间。'}</div>`
+            :(ct?'<div class="ed" style="margin-top:6px">记录几天饮食后，这里会算出日均缺口。</div>':'<div class="ed" style="margin-top:6px">去「设置」填身高 / 体重，先设定减脂热量目标。</div>')}
+        </div>
+        <div class="chart"><div class="ct">力量 PR（个人最大重量）</div><div class="cs">数据来源：已完成训练的动作重量</div>
+          ${(function(){const prm=prMap();const arr=Object.keys(prm).map(n=>({name:n,...prm[n]})).sort((a,b)=>b.weight-a.weight);
+            return arr.length?`<div class="prlist">${arr.slice(0,8).map(p=>`<div class="prrow"><span class="nm">${esc(p.name)}</span>
+              <span class="v">${p.weight}<small>kg @${p.reps}次</small></span><span class="dt">${fmtDate(p.date)}</span></div>`).join('')}</div>`
+              :'<div class="ed" style="margin-top:6px">完成训练后，这里会自动记录你的力量成长。</div>';})()}
+        </div>
+        <div class="chart"><div class="ct">周训练量</div><div class="cs">数据来源：已完成训练的训练量（kg·次）累加</div>
+          ${(function(){const vb={};state.records.filter(r=>r.type==='training'&&r.status==='done'&&r.fields).forEach(r=>{const d=new Date(r.date);const wk=Math.floor((d-from)/6048e5);if(wk<0)return;vb[wk]=(vb[wk]||0)+vol(r.fields.exercises);});
+            const keys=Object.keys(vb).sort((a,b)=>a-b);const mx=Math.max(1,...keys.map(k=>vb[k]));
+            return keys.length?`<div style="display:flex;align-items:flex-end;height:110px;gap:6px;padding:0 4px">${keys.map(k=>`<div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:4px">
+              <div style="width:60%;background:var(--ink);height:${(vb[k]/mx*90).toFixed(0)}px;border-radius:5px 5px 0 0"></div>
+              <div class="micro">W${+k+1}</div></div>`).join('')}</div>`
+              :'<div class="ed" style="margin-top:6px">完成训练后，这里会显示每周训练量。</div>';})()}
+        </div>
+        <div class="chart"><div class="ct">可解释的建议</div><div class="suggest">${sug.length?sug.map(s=>`<div>• ${s}</div>`).join(''):'<div>继续记录，数据越多建议越准。</div>'}</div></div>
+      </div>`;
+  }
+
+  // —— 相册 / 素材 ——
+  function viewMedia(){
+    const m=state.media.slice().sort((a,b)=>a.date<b.date?1:-1);
+    const wide=new Set(['md4','md2']);
+    return `<div class="topbar"><div class="brand"><div class="mark">${ART.logo}</div>
+        <div><div class="name">素材相册</div><div class="sub">${m.length} 张 · 训练痕迹</div></div></div>
+      <div class="topdate"><span data-act="open-upload" style="cursor:pointer;color:#fff;background:var(--accent);padding:6px 12px;border-radius:20px;font-weight:700">${ic('camera')} 上传</span></div></div>
+      <div class="section"><div class="album ${wide.size?'wide':''}">
+        ${m.length?m.map(it=>`<div class="ph ${wide.has(it.id)?'w':''}" data-act="open-lightbox" data-id="${it.id}">
+          ${mediaSVG(it)}<div class="cap">${esc(it.title)} · ${fmtDate(it.date)}</div></div>`).join('')
+        :'<div class="empty" style="grid-column:1/-1;padding:18px"><div class="ed">还没有素材</div><div class="ed" style="margin-top:2px">点右上角「上传」添加训练照片</div></div>'}
+      </div></div>`;
+  }
+
+  // —— 设置 ——
+  function viewSettings(){
+    const P=state.persona;
+    return `<div class="topbar"><div class="brand"><div class="mark">${ART.logo}</div>
+        <div><div class="name">设置</div><div class="sub">工作台偏好</div></div></div>
+      <div class="topdate">本地存储<br>即时保存</div></div>
+      <div class="section">
+        <div class="panel" style="background:var(--ink);color:#fff">
+          <div style="display:flex;align-items:center;gap:12px">
+            <div class="mark" style="width:48px;height:48px;border-radius:12px;overflow:hidden">${ART.icon}</div>
+            <div><div style="font-weight:800;font-size:18px">${esc(P.name||'未设置')}</div>
+            <div class="micro" style="color:rgba(255,255,255,.7)">${P.age||'—'} 岁 · ${P.height||'—'}cm · 目标 ${esc(P.goal||'—')}</div></div>
+          </div>
+        </div>
+        <div class="panel"><div class="ct" style="font-weight:800;margin-bottom:8px">个人档案</div>
+          <div class="field"><label>称呼</label><input id="p-name" value="${esc(P.name||'')}" placeholder="如 林深"></div>
+          <div class="field"><label>年龄</label><input id="p-age" type="number" inputmode="numeric" value="${P.age||''}" placeholder="岁"></div>
+          <div class="field"><label>身高 (cm)</label><input id="p-height" type="number" inputmode="numeric" value="${P.height||''}" placeholder="170"></div>
+          <div class="field"><label>训练目标</label><input id="p-goal" value="${esc(P.goal||'')}" placeholder="减脂增肌"></div>
+          <div class="field"><label>起始体重 (kg)</label><input id="p-start" type="number" inputmode="numeric" step="0.1" value="${P.startWeight||''}" placeholder="70"></div>
+          <div class="field"><label>性别</label><select id="p-gender"><option value="">未填</option><option value="男" ${P.gender==='男'?'selected':''}>男</option><option value="女" ${P.gender==='女'?'selected':''}>女</option></select></div>
+          <div class="field"><label>活动量</label><select id="p-activity"><option value="1.2" ${P.activityLevel==1.2?'selected':''}>久坐（几乎不运动）</option><option value="1.375" ${P.activityLevel==1.375?'selected':''}>轻度（每周 1-3 次）</option><option value="1.55" ${P.activityLevel==1.55?'selected':''}>中度（每周 3-5 次）</option><option value="1.725" ${P.activityLevel==1.725?'selected':''}>高度（每周 6-7 次）</option></select></div>
+          <div class="field"><label>每日饮水目标 (L)</label><input id="p-water" type="number" inputmode="numeric" step="0.1" value="${P.waterTarget?(P.waterTarget/1000):''}" placeholder="2.5"></div>
+          <div class="panel" style="margin-top:10px;background:#F4F1EA">${(function(){const _t=tdee(),_ct=calorieTarget(),_pt=proteinTarget();
+            return _t?`<div class="kv"><span class="k">每日消耗 TDEE</span><span class="v">${_t} kcal</span></div>
+              <div class="kv"><span class="k">减脂热量目标</span><span class="v">${_ct} kcal/天</span></div>
+              <div class="kv"><span class="k">蛋白目标</span><span class="v">${_pt} g/天</span></div>
+              <div class="d" style="margin-top:6px">按当前体重 ${currentWeight()||'—'}kg × 1.8g 估算，减脂缺口 400kcal（保肌优先）。</div>`
+              :`<div class="d">填完性别 / 年龄 / 身高 / 体重后，这里自动算出你的热量与蛋白目标。</div>`;})()}</div>
+          <button class="btn btn-primary btn-block" style="margin-top:8px" data-act="save-persona">保存档案</button>
+        </div>
+        <div class="panel"><div class="ct" style="font-weight:800;margin-bottom:8px">提醒</div>
+          ${state.reminders.map(r=>`<div class="kv"><span class="k">${esc(r.text)}</span>
+            <span class="status st-doing">${fmtDate(r.nextDate)}</span></div>`).join('')}
+          <label class="kv" style="cursor:pointer"><span class="k">开启提醒推送</span>
+            <input type="checkbox" ${state.settings.reminderOn?'checked':''} data-act="toggle-reminder" style="width:20px;height:20px"></label>
+        </div>
+        <div class="panel"><div class="ct" style="font-weight:800;margin-bottom:8px">分类管理</div>
+          <div class="chips">${state.categories.map(c=>`<span class="chip on">${esc(c.label)}</span>`).join('')}</div>
+          <div style="display:flex;gap:8px;margin-top:10px">
+            <input class="field" style="flex:1;margin:0" placeholder="新增分类名，如「冥想」" data-act="cat-input">
+            <button class="btn btn-ink btn-sm" data-act="add-category">添加</button></div>
+          <div class="micro" style="margin-top:6px">新分类将自动出现在记录库筛选、统计图例与新增表单中。</div>
+        </div>
+        <div class="panel"><div class="ct" style="font-weight:800;margin-bottom:8px">数据</div>
+          <button class="btn btn-line btn-block" data-act="export-data">${ic('download')} 导出全部数据（JSON）</button>
+          <div class="micro" style="margin-top:10px">${esc(state.settings.storeNote)}</div>
+          <button class="btn btn-danger btn-block" style="margin-top:12px" data-act="reset-data">清空所有数据</button>
+        </div>
+      </div>`;
+  }
+
+  // —— 详情 ——
+  function viewDetail(id){
+    const r=state.records.find(x=>x.id===id);if(!r)return viewHome();
+    const f=r.fields||{};
+    let body='';
+    if(r.type==='training'){
+      body+=`<div class="kv"><span class="k">训练量</span><span class="v">${vol(f.exercises)} kg·次</span></div>`;
+      body+=`<div class="kv"><span class="k">时长</span><span class="v">${f.duration} 分钟</span></div>`;
+      if(f.exercises){const prm=prMap();body+=`<div style="margin-top:8px">${f.exercises.map(e=>{const isPR=prm[e.name]&&prm[e.name].weight===+e.weight&&+e.weight>0&&prm[e.name].reps===+e.reps;return `<div class="exrow"><span class="nm">${esc(e.name)}</span>
+        <span class="dt">${e.sets}组 × ${e.reps}次 ${e.weight?('· '+e.weight+'kg'):''}</span>${isPR?'<span class="pr">PR ▲</span>':''}</div>`;}).join('')}</div>`;}
+    } else if(r.type==='body'){body+=`<div class="kv"><span class="k">体重</span><span class="v">${f.weight} kg</span></div>
+      <div class="kv"><span class="k">体脂</span><span class="v">${f.fat} %</span></div>`;}
+    else if(r.type==='measure'){body+=`<div class="kv"><span class="k">腰围</span><span class="v">${f.waist} cm</span></div>
+      <div class="kv"><span class="k">臂围</span><span class="v">${f.arm} cm</span></div>
+      <div class="kv"><span class="k">大腿</span><span class="v">${f.thigh} cm</span></div>
+      <div class="kv"><span class="k">胸围</span><span class="v">${f.chest} cm</span></div>`;}
+    else if(r.type==='diet'){body+=`<div class="kv"><span class="k">热量</span><span class="v">${f.kcal} kcal</span></div>
+      <div class="kv"><span class="k">蛋白质</span><span class="v">${f.protein} g</span></div>
+      <div class="kv"><span class="k">碳水</span><span class="v">${f.carb} g</span></div>
+      <div class="kv"><span class="k">脂肪</span><span class="v">${f.fat} g</span></div>
+      ${f.water?`<div class="kv"><span class="k">饮水</span><span class="v">${(f.water/1000).toFixed(1)} L</span></div>`:''}`;}
+    else if(r.type==='sleep'){body+=`<div class="kv"><span class="k">总时长</span><span class="v">${f.total} h</span></div>
+      <div class="kv"><span class="k">深睡</span><span class="v">${f.deep} h</span></div>
+      <div class="kv"><span class="k">质量</span><span class="v">${esc(f.quality)}</span></div>`;}
+    else if(r.type==='exercise'){body+=`<div class="kv"><span class="k">部位</span><span class="v">${esc(f.bodyPart)}</span></div>
+      <div class="kv"><span class="k">器械</span><span class="v">${esc(f.equipment)}</span></div>
+      <div class="kv" style="display:block"><span class="k">动作要点</span><div style="font-weight:400;margin-top:4px;line-height:1.6">${esc(f.steps)}</div></div>`;}
+    else if(r.type==='record'){body+=`<div class="kv"><span class="k">项目</span><span class="v">${esc(f.metric)}</span></div>
+      <div class="kv"><span class="k">成绩</span><span class="v">${f.value}</span></div>`;}
+    const relatedMedia=state.media.filter(x=>x.related===id);
+    const acts=state.activities.filter(a=>a.rec===id).slice(0,3);
+    const n=recNumber(r);
+    return `<div class="detail-hero">${coverHTML(r)}
+        <button class="back" data-act="nav" data-route="home">${ic('arrow')}</button></div>
+      <div class="detail-body">
+        <div class="panel" style="margin-top:0">
+          <div style="display:flex;justify-content:space-between;align-items:flex-start">
+            <div><div class="h2">${esc(r.title)}</div>
+              <div class="cap" style="margin-top:4px">${fmtDate(r.date)} ${r.time} · ${TYPE[r.type].label}</div></div>
+            <span class="status st-${r.status}">${STLABEL[r.status]}</span></div>
+          <div style="display:flex;gap:14px;margin-top:12px;align-items:baseline">
+            <span class="num" style="font-size:28px">${esc(n.v)}</span><span class="cap">${n.s}</span></div>
+          <div style="margin-top:10px;display:flex;gap:6px;flex-wrap:wrap">${(r.tags||[]).map(t=>`<span class="tagchip">${esc(t)}</span>`).join('')}</div>
+        </div>
+        <div class="panel">${body}</div>
+        ${r.note?`<div class="panel"><div class="k cap">备注</div><div style="margin-top:4px;line-height:1.6">${esc(r.note)}</div></div>`:''}
+        ${relatedMedia.length?`<div class="panel"><div class="k cap" style="margin-bottom:8px">关联素材</div>
+          <div class="album">${relatedMedia.map(x=>`<div class="ph" data-act="open-lightbox" data-id="${x.id}">${mediaSVG(x)}</div>`).join('')}</div></div>`:''}
+        ${acts.length?`<div class="panel"><div class="k cap" style="margin-bottom:8px">活动记录</div>
+          ${acts.map(a=>`<div class="kv"><span class="k">${a.date} ${a.time}</span><span class="v" style="font-weight:400">${esc(a.text)}</span></div>`).join('')}</div>`:''}
+        <div style="display:flex;gap:10px;margin-top:6px">
+          <button class="btn btn-primary" style="flex:2" data-act="open-edit" data-id="${r.id}">${ic('edit')} 编辑</button>
+          ${r.status!=='done'?`<button class="btn btn-ink" style="flex:1" data-act="toggle-status" data-id="${r.id}">${ic('check')} 完成</button>`:''}
+          <button class="btn btn-danger" style="flex:1" data-act="open-delete" data-id="${r.id}">${ic('trash')}</button>
+        </div>
+        <button class="btn btn-line btn-block" style="margin-top:8px" data-act="export-one" data-id="${r.id}">${ic('share')} 导出此记录</button>
+      </div>`;
+  }
+
+  // —— 新增向导 ——
+  function viewAdd(){
+    wiz=wiz||{step:1,type:'training',cover:'dumbbell',media:[]};
+    if(wiz.step===1){
+      const types=state.categories;
+      return `<div class="topbar"><div class="brand"><div class="mark">${ART.logo}</div><div><div class="name">新增记录</div><div class="sub">第一步 · 选类型</div></div></div>
+        <div class="topdate" data-act="nav" data-route="records" style="cursor:pointer;color:var(--accent)">取消</div></div>
+        <div class="section"><div class="steps"><div class="s on"></div><div class="s"></div><div class="s"></div></div>
+        <div class="grid c2">${types.map(t=>`<div class="card" data-act="pick-type" data-v="${t.key}" style="text-align:center">
+          <div style="width:40px;height:40px;color:var(--accent);margin:0 auto">${ic(TYPE[t.key].icon)}</div>
+          <div class="ttl" style="margin-top:6px">${esc(t.label)}</div></div>`).join('')}</div></div>`;
+    }
+    if(wiz.step===2){
+      return `<div class="topbar"><div class="brand"><div class="mark">${ART.logo}</div><div><div class="name">新增 · ${TYPE[wiz.type].label}</div><div class="sub">第二步 · 填核心</div></div></div>
+        <div class="topdate" data-act="nav" data-route="records" style="cursor:pointer;color:var(--accent)">取消</div></div>
+        <div class="section"><div class="steps"><div class="s on"></div><div class="s on"></div><div class="s"></div></div>
+        ${formHTML(wiz.type,null)}</div>`;
+    }
+    // step3
+    return `<div class="topbar"><div class="brand"><div class="mark">${ART.logo}</div><div><div class="name">新增 · 媒体</div><div class="sub">第三步 · 确认</div></div></div>
+        <div class="topdate" data-act="nav" data-route="records" style="cursor:pointer;color:var(--accent)">取消</div></div>
+      <div class="section"><div class="steps"><div class="s on"></div><div class="s on"></div><div class="s on"></div></div>
+        <div class="field"><label>封面 / 场景图</label><div class="coverpick" id="coverpick">
+          ${ART.coverList.map(c=>`<div class="c ${wiz.cover===c?'on':''}" data-act="pick-cover" data-v="${c}">${ART.svg(c)}</div>`).join('')}</div></div>
+        <div class="field"><label>添加素材（可选）</label>
+          <div class="search" style="margin-bottom:8px">${ic('camera')}<input type="file" accept="image/*" style="font-size:12px"></div>
+          <div id="up-thumb" style="display:flex;gap:8px;flex-wrap:wrap"></div></div>
+        <div class="field"><label>标题预览</label><div class="cap" id="prev-title">${esc((wiz&&wiz.draft&&wiz.draft.title)||'未填写')}</div></div>
+        <button class="btn btn-primary btn-block" data-act="confirm-add">${ic('check')} 保存记录</button>
+        <button class="btn btn-line btn-block" style="margin-top:8px" data-act="wiz-prev">上一步</button>
+      </div>`;
+  }
+
+  function formHTML(type,rec){
+    const f=(rec&&rec.fields)||{};
+    const cover=rec?rec.cover:'dumbbell';
+    let extra='';
+    if(type==='training'){
+      const exs=f.exercises||[{name:'',sets:4,reps:8,weight:0}];
+      extra=`<div class="field"><label>动作组（组 × 次 × 重量kg）</label><div id="ex-list">
+        ${exs.map((e,i)=>`<div class="exrow" style="display:block">
+          <div style="display:flex;gap:6px;margin-bottom:6px"><input style="flex:2" placeholder="动作名" value="${esc(e.name)}" data-ex="name" data-i="${i}">
+            <input style="flex:1" placeholder="组" value="${e.sets}" data-ex="sets" data-i="${i}" inputmode="numeric">
+            <input style="flex:1" placeholder="次" value="${e.reps}" data-ex="reps" data-i="${i}" inputmode="numeric">
+            <input style="flex:1" placeholder="kg" value="${e.weight}" data-ex="weight" data-i="${i}" inputmode="numeric"></div>
+          <button class="btn btn-line btn-sm" data-act="del-ex" data-i="${i}" ${exs.length<=1?'disabled':''}>删此组</button></div>`).join('')}</div>
+        <button class="btn btn-line btn-sm" data-act="add-ex" style="margin-top:4px">+ 加一组</button></div>
+        <div class="field"><label>时长（分钟）</label><input name="f_duration" value="${f.duration||45}" inputmode="numeric"></div>`;
+    } else if(type==='exercise'){
+      extra=`<div class="field"><label>训练部位</label><input name="f_bodyPart" value="${esc(f.bodyPart||'')}" placeholder="如 臀腿/后背"></div>
+        <div class="field"><label>器械</label><input name="f_equipment" value="${esc(f.equipment||'')}"></div>
+        <div class="field"><label>动作要点</label><textarea name="f_steps" placeholder="分步骤描述">${esc(f.steps||'')}</textarea></div>`;
+    } else if(type==='body'){
+      extra=`<div class="field"><label>体重 kg</label><input name="f_weight" value="${f.weight||''}" inputmode="decimal"></div>
+        <div class="field"><label>体脂 %</label><input name="f_fat" value="${f.fat||''}" inputmode="decimal"></div>`;
+    } else if(type==='measure'){
+      extra=`<div class="field"><label>腰围 cm</label><input name="f_waist" value="${f.waist||''}" inputmode="numeric"></div>
+        <div class="field"><label>臂围 cm</label><input name="f_arm" value="${f.arm||''}" inputmode="numeric"></div>
+        <div class="field"><label>大腿 cm</label><input name="f_thigh" value="${f.thigh||''}" inputmode="numeric"></div>
+        <div class="field"><label>胸围 cm</label><input name="f_chest" value="${f.chest||''}" inputmode="numeric"></div>`;
+    } else if(type==='diet'){
+      extra=`<div class="field"><label>热量 kcal</label><input name="f_kcal" value="${f.kcal||''}" inputmode="numeric"></div>
+        <div class="field"><label>蛋白质 g</label><input name="f_protein" value="${f.protein||''}" inputmode="numeric"></div>
+        <div class="field"><label>碳水 g</label><input name="f_carb" value="${f.carb||''}" inputmode="numeric"></div>
+        <div class="field"><label>脂肪 g</label><input name="f_fat" value="${f.fat||''}" inputmode="numeric"></div>
+        <div class="field"><label>饮水 ml</label><input name="f_water" value="${f.water||''}" inputmode="numeric"></div>`;
+    } else if(type==='sleep'){
+      extra=`<div class="field"><label>总时长 h</label><input name="f_total" value="${f.total||''}" inputmode="decimal"></div>
+        <div class="field"><label>深睡 h</label><input name="f_deep" value="${f.deep||''}" inputmode="decimal"></div>
+        <div class="field"><label>质量</label><input name="f_quality" value="${esc(f.quality||'')}"></div>`;
+    } else if(type==='record'){
+      extra=`<div class="field"><label>项目</label><input name="f_metric" value="${esc(f.metric||'')}" placeholder="如 硬拉 1RM"></div>
+        <div class="field"><label>成绩</label><input name="f_value" value="${f.value||''}" inputmode="numeric"></div>`;
+    }
+    return `<form id="rec-form">
+      <div class="field"><label>标题</label><input name="f_title" id="f_title" value="${esc(rec?rec.title:'')}" placeholder="如 推胸日训练"></div>
+      <div class="field"><label>日期</label><input type="date" name="f_date" value="${rec?rec.date:todayStr()}"></div>
+      <div class="field"><label>时间</label><input type="time" name="f_time" value="${rec?rec.time:'19:30'}"></div>
+      <div class="field"><label>状态</label><div class="seg" id="seg-status">
+        ${['todo','doing','done'].map(s=>`<div class="opt ${((rec&&rec.status)||'todo')===s?'on':''}" data-act="seg-status" data-v="${s}">${STLABEL[s]}</div>`).join('')}</div></div>
+      ${extra}
+      <div class="field"><label>标签（逗号分隔）</label><input name="f_tags" value="${esc((rec&&rec.tags||[]).join(','))}" placeholder="胸,力量"></div>
+      <div class="field"><label>备注</label><textarea name="f_note" placeholder="训练感受、注意事项">${esc(rec?rec.note:'')}</textarea></div>
+      <div class="field"><label>封面</label><div class="coverpick" id="coverpick">
+        ${ART.coverList.map(c=>`<div class="c ${cover===c?'on':''}" data-act="pick-cover" data-v="${c}">${ART.svg(c)}</div>`).join('')}</div></div>
+      <button class="btn btn-primary btn-block" data-act="${rec?'confirm-edit':'wiz-next'}">${rec?'保存修改':'下一步'}</button>
+      ${rec?'':`<button class="btn btn-line btn-block" style="margin-top:8px" data-act="wiz-prev">上一步</button>`}
+    </form>`;
+  }
+
+  function readForm(){
+    const g=n=>{const e=document.querySelector(`[name="${n}"]`);return e?e.value:'';};
+    const r={title:g('f_title').trim()||'未命名记录',date:g('f_date')||todayStr(),time:g('f_time')||'19:00',
+      status:document.querySelector('#seg-status .opt.on')?document.querySelector('#seg-status .opt.on').dataset.v:'todo',
+      tags:g('f_tags').split(',').map(s=>s.trim()).filter(Boolean),
+      note:g('f_note'),cover:document.querySelector('#coverpick .c.on')?document.querySelector('#coverpick .c.on').dataset.v:'dumbbell',
+      fields:{}};
+    const t=wiz?wiz.type:(form&&form.type);
+    if(t==='training'){
+      const names=$$('[data-ex="name"]'),sets=$$('[data-ex="sets"]'),reps=$$('[data-ex="reps"]'),wg=$$('[data-ex="weight"]');
+      const exs=names.map((n,i)=>({name:n.value.trim()||'动作',sets:+sets[i].value||0,reps:+reps[i].value||0,weight:+wg[i].value||0}));
+      r.fields={duration:+g('f_duration')||0,exercises:exs};
+    } else if(t==='exercise'){r.fields={bodyPart:g('f_bodyPart'),equipment:g('f_equipment'),steps:g('f_steps')};}
+    else if(t==='body'){r.fields={weight:+g('f_weight')||0,fat:+g('f_fat')||0};}
+    else if(t==='measure'){r.fields={waist:+g('f_waist')||0,arm:+g('f_arm')||0,thigh:+g('f_thigh')||0,chest:+g('f_chest')||0};}
+    else if(t==='diet'){r.fields={kcal:+g('f_kcal')||0,protein:+g('f_protein')||0,carb:+g('f_carb')||0,fat:+g('f_fat')||0,water:+g('f_water')||0};}
+    else if(t==='sleep'){r.fields={total:+g('f_total')||0,deep:+g('f_deep')||0,quality:g('f_quality')};}
+    else if(t==='record'){r.fields={metric:g('f_metric'),value:+g('f_value')||0};}
+    return r;
+  }
+
+  function viewEdit(id){
+    const r=state.records.find(x=>x.id===id);if(!r)return viewHome();
+    form={type:r.type};
+    return `<div class="topbar"><div class="brand"><div class="mark">${ART.logo}</div>
+        <div><div class="name">编辑 · ${TYPE[r.type].label}</div><div class="sub">沿用相同字段</div></div></div>
+      <div class="topdate" data-act="nav" data-route="detail/${id}" style="cursor:pointer;color:var(--accent)">取消</div></div>
+      <div class="section">${formHTML(r.type,r)}</div>`;
+  }
+
+  function viewReport(){
+    const P=state.persona;
+    const hasData=state.records.length>0||state.achievements.length>0;
+    if(!hasData){
+      return `<div class="topbar"><div class="brand"><div class="mark">${ART.logo}</div>
+        <div><div class="name">阶段报告</div><div class="sub">成长档案</div></div></div>
+        <div class="topdate" data-act="nav" data-route="home" style="cursor:pointer;color:var(--accent)">${ic('close')}</div></div>
+        <div class="detail-body"><div class="empty" style="margin-top:34px">${ART.empty}
+          <div class="et">还没有阶段报告</div>
+          <div class="ed">完成训练、记录体态后，这里会自动汇总你的成长。</div>
+          <button class="btn btn-primary btn-sm" data-act="open-add">记第一笔</button></div></div>`;
+    }
+    const train=state.records.filter(r=>r.type==='training'&&r.status==='done');
+    const volAll=train.reduce((s,r)=>s+vol(r.fields.exercises),0);
+    const body=state.records.filter(r=>r.type==='body').sort((a,b)=>a.date<b.date?1:-1);
+    const firstB=body[0],lastB=body[body.length-1];
+    const ach=state.achievements.filter(a=>a.earned);
+    const dayN=P.started?Math.max(0,Math.round((new Date(todayStr())-new Date(P.started))/864e5)):0;
+    return `<div class="topbar"><div class="brand"><div class="mark">${ART.logo}</div>
+        <div><div class="name">阶段报告</div><div class="sub">${P.started||'今日'} 至今</div></div></div>
+      <div class="topdate" data-act="nav" data-route="home" style="cursor:pointer;color:var(--accent)">${ic('close')}</div></div>
+      <div class="detail-hero" style="height:160px">${ART.curve}
+        <div class="back" style="position:absolute;top:14px;left:14px;color:#202628;font-weight:800;font-size:15px;background:rgba(244,241,234,.7)">肌动 · 成长档案</div></div>
+      <div class="detail-body">
+        <div class="panel" style="margin-top:0">
+          <div class="h2">${esc(P.name||'你')} 的阶段成果</div>
+          <div class="cap" style="margin-top:4px">从 ${P.started||'今天'} 到 ${todayStr()}，共 ${dayN} 天</div>
+        </div>
+        <div class="statrow">
+          <div class="stat"><div class="k">体重变化</div><div class="v">${firstB&&lastB?('-'+(firstB.fields.weight-lastB.fields.weight).toFixed(1)):'—'}<small> kg</small></div></div>
+          <div class="stat"><div class="k">体脂变化</div><div class="v">${firstB&&lastB?('-'+(firstB.fields.fat-lastB.fields.fat).toFixed(1)):'—'}<small> %</small></div></div>
+        </div>
+        <div class="statrow" style="margin-top:12px">
+          <div class="stat"><div class="k">完成训练</div><div class="v">${train.length}<small> 次</small></div></div>
+          <div class="stat"><div class="k">累计训练量</div><div class="v">${(volAll/1000).toFixed(1)}<small> t·次</small></div></div>
+          <div class="stat"><div class="k">连续训练</div><div class="v">${P.streak||0}<small> 天</small></div></div>
+        </div>
+        <div class="panel" style="margin-top:12px"><div class="ct" style="font-weight:800;margin-bottom:8px">已解锁成就</div>
+          ${ach.length?ach.map(a=>`<div class="ach"><div class="badge">${ic(a.icon)}</div><div><div class="bt">${esc(a.title)}</div>
+            <div class="bd">${fmtDate(a.date)}</div></div></div>`).join(''):'<div class="ed">暂无成就，达成目标后自动点亮。</div>'}</div>
+        <button class="btn btn-primary btn-block" data-act="export-data">${ic('download')} 导出完整数据</button>
+      </div>`;
+  }
+
+  // —— 动作库（字典二级页）——
+  function viewExercises(){
+    const list=state.exercises.slice();
+    const muscles=['','胸','背','腿','肩','臂','核心','臀','小腿'];
+    const fm=state._exMuscle||'';
+    const shown=fm?list.filter(e=>e.muscle===fm):list;
+    return `<div class="topbar"><div class="brand"><div class="mark">${ART.logo}</div>
+        <div><div class="name">动作库</div><div class="sub">${list.length} 个动作 · 家庭哑铃 + 弹力带</div></div></div>
+      <div class="topdate" data-act="nav" data-route="plan" style="cursor:pointer;color:var(--accent)">返回</div></div>
+      <div class="section">
+        <div class="chips">${muscles.map(m=>`<span class="chip ${fm===m?'on':''}" data-act="filter-muscle" data-v="${m}">${m||'全部'}</span>`).join('')}</div>
+        <div class="exlist">${shown.map(e=>`<div class="excard"><div class="eh"><span class="nm">${esc(e.name)}</span>
+            <span class="tagchip">${esc(e.muscle)} · ${esc(e.equipment)}</span></div>
+          <div class="meta">${e.sets}组 × ${e.reps}次 · 休息 ${e.rest}s</div>
+          ${e.note?`<div class="note">${esc(e.note)}</div>`:''}
+          <button class="btn btn-line btn-sm" data-act="del-exercise" data-id="${e.id}">删除</button></div>`).join('')
+          ||'<div class="ed">该肌群还没有动作。</div>'}</div>
+        <button class="btn btn-primary btn-block" data-act="open-exercise-form">${ic('add')} 新增动作</button>
+      </div>`;
+  }
+
+  // —— 弹层 ——
+  function closeOverlays(){$('#overlay')&&$('#overlay').remove();}
+  function mask(html){closeOverlays();const d=document.createElement('div');d.id='overlay';d.className='mask';d.innerHTML=`<div class="sheet">${html}</div>`;$('#phone').appendChild(d);}
+  function center(html){closeOverlays();const d=document.createElement('div');d.id='overlay';d.className='center-mask';d.innerHTML=`<div class="dialog">${html}</div>`;$('#phone').appendChild(d);}
+
+  function openDelete(id){
+    const r=state.records.find(x=>x.id===id);if(!r)return;
+    const relMedia=state.media.filter(m=>m.related===id);
+    center(`<div class="dt">删除这条记录？</div>
+      <div class="dd">「${esc(r.title)}」将被移除，<b>无法撤销</b>。
+      ${relMedia.length?`<div class="related-warn" style="margin-top:10px">将同时影响 ${relMedia.length} 张关联素材（相册中仍保留，但不再回链此记录）。</div>`:''}</div>
+      <div class="drow"><button class="btn btn-line" style="flex:1" data-act="cancel">再想想</button>
+        <button class="btn btn-danger" style="flex:1" data-act="confirm-delete" data-id="${id}">确认删除</button></div>`);
+  }
+
+  function openTimer(){
+    let total=90,rem=90;
+    const ring=`<svg class="ring" viewBox="0 0 200 200"><circle cx="100" cy="100" r="90" fill="none" stroke="#EAE5DA" stroke-width="12"/>
+      <circle id="t-ring" cx="100" cy="100" r="90" fill="none" stroke="#C24B3A" stroke-width="12" stroke-linecap="round"
+        stroke-dasharray="565" stroke-dashoffset="0" transform="rotate(-90 100 100)"/></svg>`;
+    mask(`<div class="timer"><div class="h2">组间休息</div><div style="position:relative;width:200px;margin:0 auto">
+        ${ring}<div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center">
+        <span class="tt" id="t-num">1:30</span></div></div>
+      <div class="chips" style="justify-content:center;margin:10px 0">
+        ${[60,90,120].map(s=>`<span class="chip ${s===90?'on':''}" data-act="timer-set" data-v="${s}">${s}s</span>`).join('')}</div>
+      <div style="display:flex;gap:10px"><button class="btn btn-primary" style="flex:1" data-act="timer-start">开始</button>
+        <button class="btn btn-line" style="flex:1" data-act="timer-pause">暂停</button>
+        <button class="btn btn-line" style="flex:1" data-act="timer-reset">重置</button>
+        <button class="btn btn-ink" style="flex:1" data-act="cancel">结束</button></div></div>`);
+    window._tm={total,rem,running:false};
+    updateTimer();
+  }
+  function updateTimer(){
+    const t=window._tm;if(!t)return;const m=Math.floor(t.rem/60),s=t.rem%60;
+    const num=$('#t-num');if(num)num.textContent=m+':'+String(s).padStart(2,'0');
+    const ring=$('#t-ring');if(ring)ring.setAttribute('stroke-dashoffset',(565*(1-t.rem/t.total)).toFixed(0));
+  }
+
+  function openLightbox(id){
+    const it=state.media.find(m=>m.id===id);if(!it)return;
+    const rel=it.related?state.records.find(r=>r.id===it.related):null;
+    const d=document.createElement('div');d.id='overlay';d.className='lightbox';
+    d.innerHTML=`<div class="lb-top"><button data-act="cancel">${ic('close')}</button>
+        <b>${esc(it.title)}</b><button data-act="replace-cover" data-id="${id}" style="font-size:12px">设为封面</button></div>
+      <div class="lb-img">${mediaSVG(it)}</div>
+      <div class="lb-info"><div class="cap">${fmtDate(it.date)} · ${esc(it.note||'')}</div>
+        ${rel?`<button class="btn btn-ghost" style="margin-top:10px" data-act="open-detail" data-id="${rel.id}">查看关联记录：${esc(rel.title)} ${ic('arrow')}</button>`:'<div class="cap" style="margin-top:8px">暂无关联记录</div>'}</div>`;
+    $('#phone').appendChild(d);
+  }
+
+  function openUpload(){
+    mask(`<div class="h2">上传素材</div><div class="cap" style="margin:4px 0 12px">真实场景图，可回链到一条记录</div>
+      <div class="field"><label>标题</label><input id="up-title" placeholder="如 周末户外跑"></div>
+      <div class="field"><label>日期</label><input type="date" id="up-date" value="${todayStr()}"></div>
+      <div class="field"><label>关联记录</label><select id="up-rel"><option value="">不关联</option>
+        ${state.records.map(r=>`<option value="${r.id}">${esc(r.title)}</option>`).join('')}</select></div>
+      <div class="field"><label>选择场景插画 或 上传本地图片</label>
+        <div class="coverpick" id="up-cover">${ART.coverList.map(c=>`<div class="c" data-act="up-pick" data-v="${c}">${ART.svg(c)}</div>`).join('')}</div>
+        <div class="search" style="margin-top:8px">${ic('camera')}<input type="file" accept="image/*" id="up-file"></div>
+        <div id="up-prev" style="margin-top:8px"></div></div>
+      <button class="btn btn-primary btn-block" data-act="confirm-upload">保存素材</button>
+      <button class="btn btn-line btn-block" style="margin-top:8px" data-act="cancel">取消</button>`);
+  }
+
+  // —— Toast ——
+  function toast(msg){
+    const t=document.createElement('div');t.className='toast';t.innerHTML=ic('check')+`<span>${esc(msg)}</span>`;
+    $('#phone').appendChild(t);setTimeout(()=>t.remove(),1600);
+  }
+
+  // —— 动作分发 ——
+  function nav(route){location.hash='#/'+route;}
+
+  function handleAct(act,el){
+    const id=el.dataset.id, v=el.dataset.v||el.dataset.route;
+    switch(act){
+      case 'nav':nav(v);break;
+      case 'open-detail':location.hash='#/detail/'+id;break;
+      case 'open-add':wiz={step:1,type:'training',cover:'dumbbell',media:[]};location.hash='#/add';break;
+      case 'open-edit':location.hash='#/edit/'+id;break;
+      case 'pick-type':wiz.type=v;wiz.step=2;location.hash='#/add';break;
+      case 'wiz-next':{const r=readForm();wiz.cover=r.cover;wiz.draft=r;wiz.step=3;location.hash='#/add';break;}
+      case 'wiz-prev':wiz.step=Math.max(1,wiz.step-1);location.hash='#/add';break;
+      case 'pick-cover':{const c=el.parentNode.querySelectorAll('.c');c.forEach(x=>x.classList.remove('on'));el.classList.add('on');break;}
+      case 'confirm-add':{
+        const r=wiz.draft||readForm();r.type=wiz.type;r.id='u'+Date.now();
+        const sc=document.querySelector('#coverpick .c.on');if(sc)r.cover=sc.dataset.v;
+        r.media=wiz.media||[];state.records.unshift(r);
+        state.media.push({id:'m'+Date.now(),key:r.cover,kind:'illustration',title:r.title,date:r.date,related:r.id,note:'新增封面'});
+        state.activities.unshift({id:'ac'+Date.now(),date:r.date,time:r.time,text:'新增 '+TYPE[r.type].label+'：'+r.title,icon:TYPE[r.type].icon,rec:r.id});
+        const isFirstTrain=r.type==='training'&&!state.records.some(x=>x.type==='training');
+        if(r.type==='training'&&r.status==='done'){bumpStreak(r.date);applyPR(r);}
+        if(isFirstTrain)unlock('第一次训练','training','记录从今天开始，证据会自己说话。');
+        save();toast('已记录 · '+r.title);location.hash='#/detail/'+r.id;break;}
+      case 'confirm-edit':{
+        const r=readForm();const orig=state.records.find(x=>x.id===id);
+        if(orig.type==='training'){const wasDone=orig.status==='done';Object.assign(orig,{title:r.title,date:r.date,time:r.time,status:r.status,tags:r.tags,note:r.note,cover:r.cover,fields:r.fields});
+          if(r.status==='done'&&!wasDone){bumpStreak(r.date);applyPR(orig);}if(r.status!=='done'&&wasDone)state.persona.streak=Math.max(0,state.persona.streak-1);}
+        else Object.assign(orig,{title:r.title,date:r.date,time:r.time,status:r.status,tags:r.tags,note:r.note,cover:r.cover,fields:r.fields});
+        save();toast('已保存修改');location.hash='#/detail/'+id;break;}
+      case 'toggle-status':{
+        const r=state.records.find(x=>x.id===id);const was=r.status;
+        r.status=r.status==='done'?'doing':'done';
+        if(r.type==='training'){if(r.status==='done'&&was!=='done'){bumpStreak(r.date);applyPR(r);}if(r.status!=='done'&&was==='done')state.persona.streak=Math.max(0,state.persona.streak-1);}
+        state.activities.unshift({id:'ac'+Date.now(),date:r.date,time:r.time,text:(r.status==='done'?'完成 ':'重开 ')+r.title,icon:r.status==='done'?'check':TYPE[r.type].icon,rec:r.id});
+        save();render();toast(r.status==='done'?'已完成 · 进度已更新':'已恢复进行中');break;}
+      case 'open-delete':openDelete(id);break;
+      case 'confirm-delete':{
+        const r=state.records.find(x=>x.id===id);state.records=state.records.filter(x=>x.id!==id);
+        state.activities=state.activities.filter(a=>a.rec!==id);
+        save();closeOverlays();toast('已删除 · '+r.title);location.hash='#/records';break;}
+      case 'open-timer':openTimer();break;
+      case 'open-upload':openUpload();break;
+      case 'open-exercise-form':mask(`<div class="h2">新增动作</div>
+        <div class="field"><label>动作名</label><input id="ex-name" placeholder="如 哑铃弯举"></div>
+        <div class="field"><label>目标肌群</label><select id="ex-muscle">${['胸','背','腿','肩','臂','核心','臀','小腿'].map(m=>`<option>${m}</option>`).join('')}</select></div>
+        <div class="field"><label>器械</label><select id="ex-eq">${['哑铃','弹力带','徒手'].map(m=>`<option>${m}</option>`).join('')}</select></div>
+        <div class="field"><label>默认组数</label><input id="ex-sets" type="number" inputmode="numeric" value="3"></div>
+        <div class="field"><label>默认次数</label><input id="ex-reps" type="number" inputmode="numeric" value="10"></div>
+        <div class="field"><label>组间休息 (s)</label><input id="ex-rest" type="number" inputmode="numeric" value="60"></div>
+        <div class="field"><label>要点</label><textarea id="ex-note" placeholder="发力 / 呼吸 / 注意事项"></textarea></div>
+        <button class="btn btn-primary btn-block" data-act="confirm-exercise">保存动作</button>
+        <button class="btn btn-line btn-block" style="margin-top:8px" data-act="cancel">取消</button>`);break;
+      case 'confirm-exercise':{const name=$('#ex-name').value.trim();if(!name){toast('请输入动作名');break;}
+        state.exercises.push({id:'e'+Date.now(),name,muscle:$('#ex-muscle').value,sets:+$('#ex-sets').value||3,reps:+$('#ex-reps').value||10,rest:+$('#ex-rest').value||60,equipment:$('#ex-eq').value,note:$('#ex-note').value.trim()});
+        save();closeOverlays();toast('已新增动作');location.hash='#/exercises';break;}
+      case 'del-exercise':{const e=state.exercises.find(x=>x.id===id);if(!e)break;
+        center(`<div class="dt">删除动作「${esc(e.name)}」？</div><div class="dd">仅从动作库移除，已用它的训练记录不受影响。</div>
+          <div class="drow"><button class="btn btn-line" style="flex:1" data-act="cancel">取消</button>
+          <button class="btn btn-danger" style="flex:1" data-act="confirm-del-exercise" data-id="${id}">确认删除</button></div>`);break;}
+      case 'confirm-del-exercise':{state.exercises=state.exercises.filter(x=>x.id!==id);save();closeOverlays();toast('已删除动作');location.hash='#/exercises';break;}
+      case 'open-routine':{const rt=state.routines.find(x=>x.id===id);if(!rt)break;
+        const items=rt.items.map(it=>{const ex=state.exercises.find(e=>e.id===it.exId);return ex?`<div class="exrow"><span class="nm">${esc(ex.name)}</span><span class="dt">${it.sets||ex.sets}组 × ${it.reps||ex.reps}次</span></div>`:'';}).join('');
+        center(`<div class="dt">${esc(rt.name)}</div><div class="dd">分化：${esc(rt.split)} · 共 ${rt.items.length} 个动作</div>
+          <div style="margin:10px 0">${items}</div>
+          <div class="drow"><button class="btn btn-line" style="flex:1" data-act="cancel">取消</button>
+          <button class="btn btn-primary" style="flex:1" data-act="confirm-routine" data-id="${rt.id}">今天开练</button></div>`);break;}
+      case 'confirm-routine':{const rt=state.routines.find(x=>x.id===id);if(!rt)break;
+        const exs=rt.items.map(it=>{const ex=state.exercises.find(e=>e.id===it.exId)||{};return {name:ex.name||'动作',sets:it.sets||ex.sets||3,reps:it.reps||ex.reps||10,weight:0,rest:it.rest||ex.rest||60};});
+        const rec={id:'u'+Date.now(),type:'training',title:rt.name+' · '+fmtDate(todayStr()),date:todayStr(),time:'19:30',status:'todo',tags:[rt.split],note:'',cover:'dumbbell',media:[],fields:{duration:45,exercises:exs}};
+        state.records.unshift(rec);
+        state.activities.unshift({id:'ac'+Date.now(),date:todayStr(),time:'19:30',text:'开练 '+rt.name+'（预填 '+exs.length+' 个动作）',icon:'training',rec:rec.id});
+        save();closeOverlays();toast('已开练 · '+rt.name);location.hash='#/detail/'+rec.id;break;}
+      case 'open-today-train':{const t=state.records.find(x=>x.type==='training'&&x.date===todayStr());
+        if(t){location.hash='#/detail/'+t.id;if(t.status==='done')toast('今日训练已完成');}
+        else{wiz={step:2,type:'training',cover:'dumbbell',media:[]};location.hash='#/add';toast('先记下今天练什么');}
+        break;}
+      case 'open-add-body':{wiz={step:2,type:'body',cover:'curve',media:[]};location.hash='#/add';break;}
+      case 'timer-set':{window._tm.total=+v;window._tm.rem=+v;updateTimer();
+        el.parentNode.querySelectorAll('.chip').forEach(c=>c.classList.remove('on'));el.classList.add('on');break;}
+      case 'timer-start':{if(window._tm.running)break;window._tm.running=true;timer=setInterval(()=>{window._tm.rem--;if(window._tm.rem<=0){clearInterval(timer);window._tm.running=false;updateTimer();toast('休息结束 · 该上重量了');return;}updateTimer();},1000);break;}
+      case 'timer-pause':{window._tm.running=false;clearInterval(timer);break;}
+      case 'timer-reset':{window._tm.rem=window._tm.total;window._tm.running=false;clearInterval(timer);timer=null;updateTimer();break;}
+      case 'cancel':closeOverlays();if(timer){clearInterval(timer);timer=null;}window._tm=null;break;
+      case 'open-lightbox':openLightbox(id);break;
+      case 'replace-cover':{const it=state.media.find(m=>m.id===id);if(it&&it.related){const r=state.records.find(x=>x.id===it.related);if(r){r.cover=it.dataUrl||it.key;save();toast('封面已更新');closeOverlays();location.hash='#/detail/'+it.related;}}break;}
+      case 'confirm-upload':{
+        const title=$('#up-title').value.trim()||'未命名素材';
+        const date=$('#up-date').value||todayStr();
+        const rel=$('#up-rel').value;
+        const picked=document.querySelector('#up-cover .c.on');
+        const fileInput=$('#up-file');
+        const fin=()=>{const key=picked?picked.dataset.v:'dumbbell';
+          state.media.unshift({id:'m'+Date.now(),key,kind:'illustration',title,date,related:rel||null,note:'用户上传'});
+          save();closeOverlays();toast('素材已存入相册');location.hash='#/media';};
+        if(fileInput.files&&fileInput.files[0]){
+          const fr=new FileReader();fr.onload=()=>{state.media.unshift({id:'m'+Date.now(),dataUrl:fr.result,kind:'photo',title,date,related:rel||null,note:'本地图片'});save();closeOverlays();toast('本地图片已上传');location.hash='#/media';};
+          fr.onerror=()=>{toast('读取失败，请重试');};fr.readAsDataURL(fileInput.files[0]);
+        } else fin();
+        break;}
+      case 'search-input':filter.q=el.value;render();{const s=document.querySelector('[data-act="search-input"]');if(s){s.focus();const v=s.value;s.setSelectionRange(v.length,v.length);}}break;
+      case 'chip-type':filter.type=v;render();break;
+      case 'chip-status':filter.status=v;render();break;
+      case 'chip-sort':filter.sort=filter.sort==='date'?'num':'date';render();break;
+      case 'filter-muscle':state._exMuscle=v;render();break;
+      case 'open-filter':mask(`<div class="h2">筛选与排序</div>
+        <div class="field"><label>类型</label><div class="seg">${['','training','exercise','body','measure','diet','sleep','record'].map(t=>`<div class="opt ${filter.type===t?'on':''}" data-act="f-type" data-v="${t}">${t?TYPE[t].label:'全部'}</div>`).join('')}</div></div>
+        <div class="field"><label>状态</label><div class="seg">${['','todo','doing','done'].map(s=>`<div class="opt ${filter.status===s?'on':''}" data-act="f-status" data-v="${s}">${s?STLABEL[s]:'全部'}</div>`).join('')}</div></div>
+        <div class="field"><label>排序</label><div class="seg">${[['date','日期↓'],['num','数值↓']].map(s=>`<div class="opt ${filter.sort===s[0]?'on':''}" data-act="f-sort" data-v="${s[0]}">${s[1]}</div>`).join('')}</div></div>
+        <button class="btn btn-line btn-block" data-act="clear-filter">清除全部筛选</button>
+        <button class="btn btn-primary btn-block" style="margin-top:8px" data-act="apply-filter">完成</button>`);break;
+      case 'f-type':filter.type=v;el.parentNode.querySelectorAll('.opt').forEach(o=>o.classList.remove('on'));el.classList.add('on');break;
+      case 'f-status':filter.status=v;el.parentNode.querySelectorAll('.opt').forEach(o=>o.classList.remove('on'));el.classList.add('on');break;
+      case 'f-sort':filter.sort=v;el.parentNode.querySelectorAll('.opt').forEach(o=>o.classList.remove('on'));el.classList.add('on');break;
+      case 'clear-filter':filter={q:'',type:'',status:'',tag:'',sort:'date'};closeOverlays();render();break;
+      case 'apply-filter':closeOverlays();render();break;
+      case 'cal-prev':{const c=state._cal||{y:2026,m:7};let m=c.m-1,y=c.y;if(m<0){m=11;y--;}state._cal={y,m};render();break;}
+      case 'cal-next':{const c=state._cal||{y:2026,m:7};let m=c.m+1,y=c.y;if(m>11){m=0;y++;}state._cal={y,m};render();break;}
+      case 'pick-day':state._selDate=v;render();break;
+      case 'set-range':state._range=v;render();break;
+      case 'seg-status':{el.parentNode.querySelectorAll('.opt').forEach(o=>o.classList.remove('on'));el.classList.add('on');break;}
+      case 'add-ex':{const i=$$('[data-ex="name"]').length;const box=document.createElement('div');box.className='exrow';box.style.display='block';
+        box.innerHTML=`<div style="display:flex;gap:6px;margin-bottom:6px"><input style="flex:2" placeholder="动作名" data-ex="name" data-i="${i}">
+          <input style="flex:1" placeholder="组" data-ex="sets" data-i="${i}" inputmode="numeric">
+          <input style="flex:1" placeholder="次" data-ex="reps" data-i="${i}" inputmode="numeric">
+          <input style="flex:1" placeholder="kg" data-ex="weight" data-i="${i}" inputmode="numeric"></div>
+          <button class="btn btn-line btn-sm" data-act="del-ex" data-i="${i}">删此组</button>`;
+        $('#ex-list').appendChild(box);break;}
+      case 'del-ex':{if($$('[data-ex="name"]').length<=1){toast('至少保留一组');break;}el.closest('.exrow').remove();break;}
+      case 'up-pick':{document.querySelectorAll('#up-cover .c').forEach(c=>c.classList.remove('on'));el.classList.add('on');break;}
+      case 'upload-file':{const f=el.files&&el.files[0];if(f){const th=document.getElementById('up-thumb');if(th){th.innerHTML='<div style="width:60px;height:46px;border-radius:8px;background:#EAE5DA;display:flex;align-items:center;justify-content:center;font-size:11px;color:var(--taupe)">本地图</div>';}}break;}
+      case 'add-category':{const inp=document.querySelector('[data-act="cat-input"]');const name=inp&&inp.value.trim();if(!name){toast('请输入分类名');break;}
+        const key=name;if(state.categories.some(c=>c.key===key)){toast('分类已存在');break;}
+        state.categories.push({key,label:name});TYPE[key]={label:name,icon:'tag',cover:'dumbbell'};
+        save();toast('已新增分类：'+name);render();break;}
+      case 'toggle-reminder':state.settings.reminderOn=el.checked;save();toast(el.checked?'提醒已开启':'提醒已关闭');break;
+      case 'save-persona':{const P=state.persona;P.name=(document.querySelector('#p-name').value||'').trim();const age=+document.querySelector('#p-age').value;if(age)P.age=age;const h=+document.querySelector('#p-height').value;if(h)P.height=h;P.goal=(document.querySelector('#p-goal').value||'').trim();const g=document.querySelector('#p-gender').value;if(g)P.gender=g;const al=+document.querySelector('#p-activity').value;if(al)P.activityLevel=al;const sw=+document.querySelector('#p-start').value;if(sw)P.startWeight=sw;const wt=+document.querySelector('#p-water').value;if(wt)P.waterTarget=wt*1000;if(!P.started)P.started=todayStr();save();toast('档案已保存');render();break;}
+      case 'export-data':exportJSON();break;
+      case 'export-one':{const r=state.records.find(x=>x.id===id);exportObj(r,'记录_'+r.title);break;}
+      case 'reset-data':center(`<div class="dt">清空所有数据？</div><div class="dd">将删除全部记录、素材、活动与成就，<b>回到空白工作台（不可恢复）</b>。</div>
+        <div class="drow"><button class="btn btn-line" style="flex:1" data-act="cancel">取消</button>
+        <button class="btn btn-danger" style="flex:1" data-act="do-reset">确认清空</button></div>`);break;
+      case 'do-reset':state=clone(SEED);save();closeOverlays();toast('已清空，开始记录你的数据');location.hash='#/home';break;
+    }
+  }
+
+  function unlock(title,icon,desc){
+    if(!state.achievements.some(a=>a.title===title))
+      state.achievements.push({id:'ac'+Date.now(),title,date:todayStr(),icon,desc,earned:true});
+  }
+  // —— PR 追踪（按动作名聚合历史最大重量）——
+  function prMap(excludeId){
+    const m={};
+    state.records.filter(r=>r.id!==excludeId&&r.type==='training'&&r.status==='done'&&r.fields&&r.fields.exercises)
+      .forEach(r=>{(r.fields.exercises||[]).forEach(e=>{const w=+e.weight||0;if(w<=0)return;const cur=m[e.name];if(!cur||w>cur.weight)m[e.name]={weight:w,reps:+e.reps||0,date:r.date};});});
+    return m;
+  }
+  function detectPR(rec){
+    const m=prMap(rec.id),hit=[];
+    (rec.fields.exercises||[]).forEach(e=>{const w=+e.weight||0;if(w<=0)return;const cur=m[e.name];
+      if(!cur||w>cur.weight)hit.push({name:e.name,weight:w,reps:+e.reps||0});});
+    return hit;
+  }
+  function applyPR(rec){
+    const hit=detectPR(rec);
+    if(!hit.length)return;
+    const top=hit.sort((a,b)=>b.weight-a.weight)[0];
+    unlock('力量新高度','record',top.name+' 刷新个人最大重量 '+top.weight+'kg。');
+    state.activities.unshift({id:'ac'+Date.now(),date:rec.date,time:rec.time,text:top.name+' 破纪录 '+top.weight+'kg（'+top.reps+'次）',icon:'record',rec:rec.id});
+    toast(top.name+' PR · '+top.weight+'kg');
+  }
+
+  function bumpStreak(date){
+    state.persona.streak=(state.persona.streak||0)+1;
+    const n=state.persona.streak;
+    if(n===7)unlock('连续训练 7 天','check','习惯开始扎根。');
+    if(n===14)unlock('连续训练 14 天','training','双周节律，稳。');
+    if(n===21)unlock('连续训练 21 天','trophy','三周不中断，身体已适应。');
+    if(n===30)unlock('连续训练 30 天','record','月度全勤，证据确凿。');
+  }
+
+  function exportJSON(){
+    const blob=new Blob([JSON.stringify(state,null,2)],{type:'application/json'});
+    const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='肌动_数据导出.json';a.click();
+    toast('数据已导出');
+  }
+  function exportObj(obj,name){
+    const blob=new Blob([JSON.stringify(obj,null,2)],{type:'application/json'});
+    const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=name+'.json';a.click();
+    toast('已导出此记录');
+  }
+
+  // —— 事件绑定 ——
+  document.addEventListener('click',e=>{const a=e.target.closest('[data-act]');if(a&&a.type!=='file'){e.preventDefault();handleAct(a.dataset.act,a);}});
+  document.addEventListener('input',e=>{if(e.target.matches('[data-act="search-input"]')){filter.q=e.target.value;render();}});
+  document.addEventListener('change',e=>{
+    if(e.target.type==='file'){
+      const f=e.target.files&&e.target.files[0];
+      const th=document.getElementById('up-thumb');
+      if(f&&th)th.innerHTML='<div style="width:60px;height:46px;border-radius:8px;background:#EAE5DA;display:flex;align-items:center;justify-content:center;font-size:11px;color:var(--taupe)">本地图</div>';
+      return;
+    }
+    if(e.target.matches('[data-act="toggle-reminder"]')){handleAct('toggle-reminder',e.target);}
+  });
+  window.addEventListener('hashchange',render);
+
+  // 启动
+  if(!location.hash)location.hash='#/home';
+  render();
+})();
+</script>
+</body>
+</html>

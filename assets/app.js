@@ -23,7 +23,8 @@
 
   // —— 状态 ——
   let state=null, filter={q:'',type:'',status:'',tag:'',sort:'date'}, wiz=null, timer=null, form=null;
-  function save(){try{localStorage.setItem(STORE,JSON.stringify(state));}catch(e){}}
+  let appReady=false, _syncTimer=null, _suppressSync=false;
+  function save(){try{localStorage.setItem(STORE,JSON.stringify(state));}catch(e){} scheduleCloudSync();}
   function load(){try{const s=localStorage.getItem(STORE);return s?JSON.parse(s):null;}catch(e){return null;}}
   function initState(){state=load()||clone(SEED);if(!state.exercises)state.exercises=clone(SEED.exercises);if(!state.routines)state.routines=clone(SEED.routines);
     const P=state.persona||(state.persona={});
@@ -402,7 +403,7 @@
 
   // —— 设置 ——
   function viewSettings(){
-    const P=state.persona;
+    const P=state.persona; const cc=cloudCfg();
     return `<div class="topbar"><div class="brand"><div class="mark">${ART.logo}</div>
         <div><div class="name">设置</div><div class="sub">工作台偏好</div></div></div>
       <div class="topdate">本地存储<br>即时保存</div></div>
@@ -443,6 +444,21 @@
             <input class="field" style="flex:1;margin:0" placeholder="新增分类名，如「冥想」" data-act="cat-input">
             <button class="btn btn-ink btn-sm" data-act="add-category">添加</button></div>
           <div class="micro" style="margin-top:6px">新分类将自动出现在记录库筛选、统计图例与新增表单中。</div>
+        </div>
+        <div class="panel"><div class="ct" style="font-weight:800;margin-bottom:8px">云同步 · 自动备份到 GitHub</div>
+          <div class="cloud-hint">把全部数据自动同步到你的私有仓库 <b>jidong-data</b>：改动后自动上传，换手机或清浏览器也能一键恢复。GitHub Token 仅存本机，不同步给别人。</div>
+          <div class="field" style="margin-top:10px"><label>仓库所有者</label><input id="c-owner" value="${esc(cc.owner||'dh1326060190-lgtm')}"></div>
+          <div class="field"><label>仓库名</label><input id="c-repo" value="${esc(cc.repo||'jidong-data')}"></div>
+          <div class="field"><label>GitHub Token</label><input id="c-token" type="password" value="${esc(cc.token||'')}" placeholder="ghp_xxx 粘贴你的访问令牌"></div>
+          <label class="kv" style="cursor:pointer;margin-top:6px"><span class="k">自动同步（改动后自动上传）</span>
+            <input type="checkbox" id="c-auto" ${cc.autoSync?'checked':''} style="width:20px;height:20px"></label>
+          <div style="display:flex;gap:8px;margin-top:10px;flex-wrap:wrap">
+            <button class="btn btn-primary btn-sm" style="flex:1" data-act="cloud-test">测试连接</button>
+            <button class="btn btn-ink btn-sm" style="flex:1" data-act="cloud-upload">立即上传</button>
+            <button class="btn btn-line btn-sm" style="flex:1" data-act="cloud-download">从云端恢复</button>
+          </div>
+          <div class="cloud-status" id="c-status">${esc(cc.status||'未同步')}</div>
+          <div class="cloud-hint">如何获取 Token：GitHub → 头像 → Settings → Developer settings → Personal access tokens → Generate new token（勾选 repo）→ 复制 ghp_ 开头的串，粘贴到上方。令牌仅保存在你这台手机。</div>
         </div>
         <div class="panel"><div class="ct" style="font-weight:800;margin-bottom:8px">数据备份</div>
           <button class="btn btn-primary btn-block" data-act="export-data">${ic('download')} 导出备份（JSON）</button>
@@ -904,6 +920,9 @@
         save();toast('已新增分类：'+name);render();break;}
       case 'toggle-reminder':state.settings.reminderOn=el.checked;save();toast(el.checked?'提醒已开启':'提醒已关闭');break;
       case 'save-persona':{const P=state.persona;P.name=(document.querySelector('#p-name').value||'').trim();const age=+document.querySelector('#p-age').value;if(age)P.age=age;const h=+document.querySelector('#p-height').value;if(h)P.height=h;P.goal=(document.querySelector('#p-goal').value||'').trim();const g=document.querySelector('#p-gender').value;if(g)P.gender=g;const al=+document.querySelector('#p-activity').value;if(al)P.activityLevel=al;const sw=+document.querySelector('#p-start').value;if(sw)P.startWeight=sw;const wt=+document.querySelector('#p-water').value;if(wt)P.waterTarget=wt*1000;if(!P.started)P.started=todayStr();save();toast('档案已保存');render();break;}
+      case 'cloud-test':testCloud();break;
+      case 'cloud-upload':syncUpload(false);break;
+      case 'cloud-download':syncDownload(false);break;
       case 'export-data':exportJSON();break;
       case 'export-one':{const r=state.records.find(x=>x.id===id);exportObj(r,'记录_'+r.title);break;}
       case 'import-data':{
@@ -1034,6 +1053,95 @@
     toast('已导出此记录');
   }
 
+  // —— 云同步（GitHub 作为私有存储，无后端）——
+  const CLOUD_KEY='jidong_cloud';
+  function cloudCfg(){try{return JSON.parse(localStorage.getItem(CLOUD_KEY))||{};}catch(e){return {};}}
+  function saveCloudCfg(c){try{localStorage.setItem(CLOUD_KEY,JSON.stringify(c));}catch(e){}}
+  function fmtTime(d){return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0')+' '+String(d.getHours()).padStart(2,'0')+':'+String(d.getMinutes()).padStart(2,'0');}
+  function b64encode(str){const b=new TextEncoder().encode(str);let s='';for(let i=0;i<b.length;i++)s+=String.fromCharCode(b[i]);return btoa(s);}
+  function b64decode(b64){const bin=atob(b64);const b=new Uint8Array(bin.length);for(let i=0;i<bin.length;i++)b[i]=bin.charCodeAt(i);return new TextDecoder().decode(b);}
+  function setCloudStatus(msg){const c=cloudCfg();c.status=msg;saveCloudCfg(c);const el=$('#c-status');if(el)el.textContent=msg;}
+  function readCloudInputs(){
+    const o=$('#c-owner'), r=$('#c-repo'), t=$('#c-token'), a=$('#c-auto');
+    if(!o)return cloudCfg();
+    const c=cloudCfg();
+    if(o.value&&o.value.trim())c.owner=o.value.trim();
+    if(r.value&&r.value.trim())c.repo=r.value.trim();
+    if(t.value&&t.value.trim())c.token=t.value.trim();
+    c.autoSync=!!(a&&a.checked);
+    saveCloudCfg(c);
+    return c;
+  }
+  function ghHeaders(token){return {'Authorization':'Bearer '+token,'Accept':'application/vnd.github+json'};}
+  async function testCloud(){
+    const c=readCloudInputs();
+    if(!c.token||!c.owner||!c.repo){toast('请先填写 仓库 与 Token');return;}
+    setCloudStatus('连接测试中…');
+    try{
+      const res=await fetch('https://api.github.com/repos/'+encodeURIComponent(c.owner)+'/'+encodeURIComponent(c.repo),{headers:ghHeaders(c.token)});
+      if(res.status===200){const d=await res.json();setCloudStatus('✓ 连接成功（'+(d.private?'私有':'公开')+'仓库 '+d.full_name+'）');toast('连接成功');}
+      else if(res.status===401){setCloudStatus('✗ Token 无效或无权限');toast('Token 无效');}
+      else if(res.status===404){setCloudStatus('✗ 仓库不存在或无权限');toast('仓库不可访问');}
+      else{setCloudStatus('✗ 连接失败 '+res.status);toast('连接失败 '+res.status);}
+    }catch(e){setCloudStatus('✗ 网络错误（手机需能访问 github.com）');toast('网络错误');}
+  }
+  async function syncUpload(isAuto){
+    const c=readCloudInputs();
+    if(!c.token||!c.owner||!c.repo){if(!isAuto)toast('请先在设置填写 仓库 与 Token');return false;}
+    const payload={_v:1,_syncedAt:Date.now(),state:clone(state)};
+    const content=b64encode(JSON.stringify(payload));
+    if(!isAuto)setCloudStatus('上传中…');
+    try{
+      const g=await fetch('https://api.github.com/repos/'+encodeURIComponent(c.owner)+'/'+encodeURIComponent(c.repo)+'/contents/state.json',{headers:ghHeaders(c.token)});
+      let sha=null;
+      if(g.status===200){sha=(await g.json()).sha;}
+      else if(g.status!==404){if(!isAuto){setCloudStatus('✗ 读取失败 '+g.status);toast('读取失败');}return false;}
+      const p=await fetch('https://api.github.com/repos/'+encodeURIComponent(c.owner)+'/'+encodeURIComponent(c.repo)+'/contents/state.json',{
+        method:'PUT',headers:Object.assign({'Content-Type':'application/json'},ghHeaders(c.token)),
+        body:JSON.stringify({message:'肌动 数据同步 '+new Date().toISOString(),content:content,sha:sha||undefined})
+      });
+      if(p.status===200||p.status===201){const cc=cloudCfg();cc.lastSync=Date.now();saveCloudCfg(cc);setCloudStatus('✓ 已同步 '+fmtTime(new Date()));if(!isAuto)toast('已同步到云端');return true;}
+      if(!isAuto){setCloudStatus('✗ 上传失败 '+p.status);toast('上传失败 '+p.status);}
+      return false;
+    }catch(e){if(!isAuto){setCloudStatus('✗ 网络错误（需能访问 github.com）');toast('网络错误');}return false;}
+  }
+  async function syncDownload(isAuto){
+    const c=readCloudInputs();
+    if(!c.token||!c.owner||!c.repo){if(!isAuto)toast('请先填写 仓库 与 Token');return false;}
+    if(!isAuto)setCloudStatus('恢复中…');
+    try{
+      const res=await fetch('https://api.github.com/repos/'+encodeURIComponent(c.owner)+'/'+encodeURIComponent(c.repo)+'/contents/state.json',{headers:ghHeaders(c.token)});
+      if(res.status===404){if(!isAuto){setCloudStatus('云端还没有备份，先上传一次');toast('云端暂无备份');}return false;}
+      if(res.status!==200){if(!isAuto){setCloudStatus('✗ 读取失败 '+res.status);toast('读取失败');}return false;}
+      const d=await res.json();
+      const payload=JSON.parse(b64decode(d.content));
+      if(!payload.state){if(!isAuto){setCloudStatus('✗ 备份格式错误');toast('格式错误');}return false;}
+      const cc=cloudCfg();const remoteTs=payload._syncedAt||0;const localTs=cc.lastSync||0;
+      if(remoteTs<=localTs&&localTs){if(!isAuto){setCloudStatus('已是最新（云端无更新）');toast('已是最新');}return false;}
+      _suppressSync=true;
+      state=clone(payload.state);
+      if(!state.exercises)state.exercises=[];if(!state.routines)state.routines=[];
+      save();
+      _suppressSync=false;
+      cc.lastSync=remoteTs;saveCloudCfg(cc);
+      setCloudStatus('✓ 已从云端恢复 '+fmtTime(new Date()));if(!isAuto)toast('已从云端恢复');render();
+      return true;
+    }catch(e){if(!isAuto){setCloudStatus('✗ 解析失败/网络错误');toast('恢复失败');}return false;}
+  }
+  function scheduleCloudSync(){
+    if(!appReady||_suppressSync)return;
+    const c=cloudCfg();
+    if(!c.autoSync||!c.token)return;
+    if(_syncTimer)clearTimeout(_syncTimer);
+    _syncTimer=setTimeout(()=>{_syncTimer=null;syncUpload(true);},2500);
+  }
+  async function cloudAuto(){
+    const c=cloudCfg();
+    if(!c.autoSync||!c.token)return;
+    const pulled=await syncDownload(true);
+    if(!pulled)await syncUpload(true);
+  }
+
   // —— 事件绑定 ——
   document.addEventListener('click',e=>{const a=e.target.closest('[data-act]');if(a&&a.type!=='file'){e.preventDefault();handleAct(a.dataset.act,a);}});
   document.addEventListener('input',e=>{if(e.target.matches('[data-act="search-input"]')){filter.q=e.target.value;render();}});
@@ -1051,4 +1159,6 @@
   // 启动
   if(!location.hash)location.hash='#/home';
   render();
+  appReady=true;
+  cloudAuto();
 })();

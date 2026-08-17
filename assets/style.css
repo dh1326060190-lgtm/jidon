@@ -283,3 +283,8 @@ body{display:flex;justify-content:center;min-height:100vh;}
 .prrow .v{font-weight:800;color:var(--accent);white-space:nowrap}
 .prrow .v small{font-size:10px;color:var(--taupe);font-weight:600}
 .prrow .dt{font-size:10px;color:var(--taupe);white-space:nowrap}
+
+/* 云同步面板 */
+.cloud-hint{font-size:11px;color:var(--taupe);margin-top:6px;line-height:1.5}
+.cloud-status{font-size:12px;color:var(--green);margin-top:8px;min-height:16px;word-break:break-word}
+.cloud-status:empty{display:none}

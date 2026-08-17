@@ -63,6 +63,6 @@
     activities: [],
     achievements: [],
     reminders: [],
-    settings: { reminderOn: false, storeNote: '数据保存在本机浏览器（localStorage），清除浏览器数据会丢失。' }
+    settings: { reminderOn: false, storeNote: '数据保存在本机浏览器（localStorage）。换手机或清浏览器前请先「导出备份」，丢失后可「从备份导入」恢复。' }
   };
 })();

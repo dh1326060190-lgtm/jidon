@@ -444,8 +444,9 @@
             <button class="btn btn-ink btn-sm" data-act="add-category">添加</button></div>
           <div class="micro" style="margin-top:6px">新分类将自动出现在记录库筛选、统计图例与新增表单中。</div>
         </div>
-        <div class="panel"><div class="ct" style="font-weight:800;margin-bottom:8px">数据</div>
-          <button class="btn btn-line btn-block" data-act="export-data">${ic('download')} 导出全部数据（JSON）</button>
+        <div class="panel"><div class="ct" style="font-weight:800;margin-bottom:8px">数据备份</div>
+          <button class="btn btn-primary btn-block" data-act="export-data">${ic('download')} 导出备份（JSON）</button>
+          <button class="btn btn-line btn-block" style="margin-top:10px" data-act="import-data">${ic('upload')} 从备份导入</button>
           <div class="micro" style="margin-top:10px">${esc(state.settings.storeNote)}</div>
           <button class="btn btn-danger btn-block" style="margin-top:12px" data-act="reset-data">清空所有数据</button>
         </div>
@@ -905,6 +906,57 @@
       case 'save-persona':{const P=state.persona;P.name=(document.querySelector('#p-name').value||'').trim();const age=+document.querySelector('#p-age').value;if(age)P.age=age;const h=+document.querySelector('#p-height').value;if(h)P.height=h;P.goal=(document.querySelector('#p-goal').value||'').trim();const g=document.querySelector('#p-gender').value;if(g)P.gender=g;const al=+document.querySelector('#p-activity').value;if(al)P.activityLevel=al;const sw=+document.querySelector('#p-start').value;if(sw)P.startWeight=sw;const wt=+document.querySelector('#p-water').value;if(wt)P.waterTarget=wt*1000;if(!P.started)P.started=todayStr();save();toast('档案已保存');render();break;}
       case 'export-data':exportJSON();break;
       case 'export-one':{const r=state.records.find(x=>x.id===id);exportObj(r,'记录_'+r.title);break;}
+      case 'import-data':{
+        mask(`<div class="h2">导入数据备份</div>
+          <div class="cap" style="margin:4px 0 10px">选择此前导出的 <b>.json</b> 备份文件，或粘贴备份文本。导入将<b>覆盖当前全部数据</b>（不可撤销）。</div>
+          <div class="search" style="margin-bottom:10px">${ic('upload')}<input type="file" accept="application/json,.json" id="imp-file" style="font-size:12px"></div>
+          <div class="field"><label>或粘贴备份文本</label><textarea id="imp-text" placeholder="把导出的文本粘贴到这里" style="min-height:120px;font-size:11px;font-family:monospace"></textarea></div>
+          <button class="btn btn-primary btn-block" data-act="do-import">${ic('check')} 读取并导入</button>
+          <button class="btn btn-line btn-block" style="margin-top:8px" data-act="cancel">取消</button>`);
+        break;}
+      case 'do-import':{
+        const fileInput=document.getElementById('imp-file');
+        const ta=document.getElementById('imp-text');
+        const readDone=(str)=>{
+          let parsed;
+          try{parsed=JSON.parse(str);}catch(e){toast('解析失败：不是有效 JSON');return;}
+          if(!parsed||typeof parsed!=='object'||!Array.isArray(parsed.records)||!parsed.persona){
+            toast('不是完整备份（需含 records 与 persona）');return;}
+          window._impData=parsed;
+          center(`<div class="dt">覆盖当前全部数据？</div>
+            <div class="dd">备份含 <b>${parsed.records.length}</b> 条记录、${parsed.media?parsed.media.length:0} 张素材。导入后替换现有数据，不可撤销。</div>
+            <div class="drow"><button class="btn btn-line" style="flex:1" data-act="cancel">取消</button>
+            <button class="btn btn-danger" style="flex:1" data-act="confirm-import">确认导入</button></div>`);
+        };
+        if(fileInput&&fileInput.files&&fileInput.files[0]){
+          const fr=new FileReader();fr.onload=()=>readDone(fr.result);fr.onerror=()=>toast('读取文件失败');fr.readAsText(fileInput.files[0]);
+        } else if(ta&&ta.value.trim()){
+          readDone(ta.value.trim());
+        } else {
+          toast('请先选择备份文件，或粘贴备份文本');
+        }
+        break;}
+      case 'confirm-import':{
+        if(!window._impData)break;
+        state=window._impData;
+        if(!state.settings)state.settings={reminderOn:false,storeNote:''};
+        if(!state.version)state.version=3;
+        ['records','media','activities','achievements','reminders','exercises','routines','categories'].forEach(k=>{if(!Array.isArray(state[k]))state[k]=clone(SEED[k]||[]);});
+        save();closeOverlays();toast('导入成功 · 已恢复 '+state.records.length+' 条记录');
+        location.hash='#/home';render();
+        break;}
+      case 'copy-export':{
+        const ta=document.getElementById('exp-text');
+        const text=ta?ta.value:(window._expJson||JSON.stringify(state));
+        copyText(text).then(ok=>toast(ok?'已复制，去粘贴保存':'复制失败，请长按手动选择'));
+        break;}
+      case 'download-export':{
+        const name=el.dataset.name||'肌动_数据备份.json';
+        const blob=new Blob([window._expJson||JSON.stringify(state,null,2)],{type:'application/json'});
+        const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=name;a.click();
+        try{URL.revokeObjectURL(a.href);}catch(e){}
+        toast('已开始下载文件');
+        break;}
       case 'reset-data':center(`<div class="dt">清空所有数据？</div><div class="dd">将删除全部记录、素材、活动与成就，<b>回到空白工作台（不可恢复）</b>。</div>
         <div class="drow"><button class="btn btn-line" style="flex:1" data-act="cancel">取消</button>
         <button class="btn btn-danger" style="flex:1" data-act="do-reset">确认清空</button></div>`);break;
@@ -948,9 +1000,33 @@
   }
 
   function exportJSON(){
-    const blob=new Blob([JSON.stringify(state,null,2)],{type:'application/json'});
-    const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='肌动_数据导出.json';a.click();
-    toast('数据已导出');
+    const json=JSON.stringify(state,null,2);
+    const ts=todayStr().replace(/-/g,'');
+    const fname='肌动_数据备份_'+ts+'.json';
+    window._expJson=json;
+    const hasPhoto=state.media.some(m=>m.dataUrl);
+    mask(`<div class="h2">导出数据备份</div>
+      <div class="cap" style="margin:4px 0 10px">共 ${state.records.length} 条记录、${state.media.length} 张素材。${hasPhoto?'<b>含本地照片，文本较大，建议用「下载文件」保存。</b>':'轻点文本框全选后复制，或下载文件保存。'}换手机或清浏览器前务必备份。</div>
+      <div class="field"><label>备份内容（点选全选后复制）</label>
+        <textarea id="exp-text" readonly style="min-height:170px;font-size:11px;font-family:monospace;line-height:1.4">${esc(json)}</textarea></div>
+      <div style="display:flex;gap:10px">
+        <button class="btn btn-primary" style="flex:1" data-act="copy-export">${ic('copy')} 复制</button>
+        <button class="btn btn-ink" style="flex:1" data-act="download-export" data-name="${fname}">${ic('download')} 下载文件</button>
+      </div>
+      <button class="btn btn-line btn-block" style="margin-top:8px" data-act="cancel">关闭</button>`);
+  }
+  function copyText(text){
+    return new Promise(res=>{
+      if(navigator.clipboard&&window.isSecureContext){
+        navigator.clipboard.writeText(text).then(()=>res(true)).catch(()=>res(legacyCopy(text)));
+      } else res(legacyCopy(text));
+    });
+  }
+  function legacyCopy(text){
+    const ta=document.createElement('textarea');ta.value=text;ta.style.position='fixed';ta.style.top='-9999px';ta.style.opacity='0';
+    document.body.appendChild(ta);ta.focus();ta.select();
+    let ok=false;try{ok=document.execCommand('copy');}catch(e){}
+    ta.remove();return ok;
   }
   function exportObj(obj,name){
     const blob=new Blob([JSON.stringify(obj,null,2)],{type:'application/json'});

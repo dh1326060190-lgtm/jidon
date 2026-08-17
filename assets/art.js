@@ -252,6 +252,8 @@
     download: ic('<path d="M12 3v12M7 10l5 5 5-5M5 21h14"/>'),
     bell: ic('<path d="M18 8a6 6 0 0 0-12 0c0 7-3 9-3 9h18s-3-2-3-9M13.7 21a2 2 0 0 1-3.4 0"/>'),
     share: ic('<circle cx="6" cy="12" r="2.5"/><circle cx="18" cy="6" r="2.5"/><circle cx="18" cy="18" r="2.5"/><path d="M8.2 10.8l7.6-3.6M8.2 13.2l7.6 3.6"/>'),
+    upload: ic('<path d="M12 21V9M7 14l5-5 5 5M5 3h14"/>'),
+    copy: ic('<rect x="9" y="9" width="11" height="11" rx="2"/><path d="M5 15V5a2 2 0 0 1 2-2h10"/>'),
   };
 
   window.ART = {

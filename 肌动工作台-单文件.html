@@ -703,6 +703,7 @@ body{display:flex;justify-content:center;min-height:100vh;}
     return{v:'—',s:''};
   }
   function todayStr(){const d=new Date();return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');}
+  function localDateStr(d){return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');}
   // —— 营养目标（单机 TDEE 估算）——
   function currentWeight(){const b=state.records.filter(r=>r.type==='body').sort((a,b)=>a.date<b.date?1:-1);const w=(b[0]||{}).fields;return w&&w.weight?(+w.weight):(+state.persona.startWeight||0);}
   function tdee(){const P=state.persona;const w=currentWeight();if(!P.gender||!P.age||!P.height||!w)return null;const bmr=10*w+6.25*P.height-5*P.age+(P.gender==='男'?5:-161);return Math.round(bmr*(P.activityLevel||1.375));}
@@ -774,11 +775,6 @@ body{display:flex;justify-content:center;min-height:100vh;}
         <div class="nutri-info"><div class="k">今日蛋白</div>
           <div class="v" style="font-size:15px;color:var(--accent)">设置目标</div>
           <div class="d">去档案填身高/体重，自动估算蛋白目标</div></div></div>`;
-    // 体重趋势 mini
-    const pts=bodyRecs.map(r=>r.fields.weight);
-    const wmin=Math.min(...pts)-1,wmax=Math.max(...pts)+1;
-    const linePts=bodyRecs.map((r,i)=>`${(i/(pts.length-1)*300+10).toFixed(0)},${(70-(r.fields.weight-wmin)/(wmax-wmin)*60).toFixed(0)}`).join(' ');
-
     const hero=`<section class="hero">
       ${ART.hero}
       <div class="overlay">
@@ -807,7 +803,7 @@ body{display:flex;justify-content:center;min-height:100vh;}
 
     const stats=`<div class="statrow">
       <div class="stat"><div class="k">近 7 天训练</div><div class="v">${trainWeek}<small> 次</small></div><div class="d">完成后自动累计</div></div>
-      <div class="stat"><div class="k">当前体重</div><div class="v">${lastBody?lastBody.fields.weight:'—'}<small> kg</small></div><div class="d">${lastBody&&P.startWeight?('较目标 -'+(P.startWeight-lastBody.fields.weight).toFixed(1)):'记录后显示'}</div></div>
+      <div class="stat"><div class="k">当前体重</div><div class="v">${lastBody?lastBody.fields.weight:'—'}<small> kg</small></div><div class="d">${lastBody&&P.startWeight?('较起始 '+(lastBody.fields.weight-P.startWeight).toFixed(1)+'kg'):'记录后显示'}</div></div>
       ${lastBody?'<div class="stat"><div class="k">体脂</div><div class="v">'+lastBody.fields.fat+'<small> %</small></div><div class="d">持续监测</div></div>':'<div class="stat" data-act="open-add-body" style="cursor:pointer"><div class="k">体脂</div><div class="v" style="font-size:15px;color:var(--accent)">+ 记一次</div><div class="d">点此测体态</div></div>'}
     </div>`;
 
@@ -947,7 +943,7 @@ body{display:flex;justify-content:center;min-height:100vh;}
     let from;if(range==='week'){from=new Date(now);from.setDate(now.getDate()-6);}
     else if(range==='month'){from=new Date(now);from.setDate(now.getDate()-29);}
     else {const earliest=state.records.slice().sort((a,b)=>a.date<b.date?-1:1)[0];from=new Date(earliest?earliest.date:todayStr());}
-    const fromS=from.toISOString().slice(0,10);
+    const fromS=localDateStr(from);
     const inRange=r=>r.date>=fromS&&r.date<=todayStr();
     const recs=state.records.filter(inRange);
     // 完成趋势（按周）
@@ -960,14 +956,14 @@ body{display:flex;justify-content:center;min-height:100vh;}
     // 分类占比
     const dist={};recs.forEach(r=>dist[r.type]=(dist[r.type]||0)+1);
     const total=recs.length||1;const palette={training:'#C24B3A',exercise:'#3E5C50',body:'#8A8276',measure:'#B08D57',diet:'#C24B3A',sleep:'#3E5C50',record:'#202628'};
-    let acc=0;const segs=Object.keys(dist).map(t=>{const v=dist[t]/total*100;const seg=`<span style="width:${v}%;background:${palette[t]||'#999'}"></span>`;acc+=v;return seg;}).join('');
+    const segs=Object.keys(dist).map(t=>{const v=dist[t]/total*100;return `<span style="width:${v}%;background:${palette[t]||'#999'}"></span>`;}).join('');
     const legend=Object.keys(dist).map(t=>`<span><i style="background:${palette[t]}"></i>${TYPE[t].label} ${dist[t]}</span>`).join('');
     // 体重变化（周平均，平滑每日波动）
     const body=state.records.filter(r=>r.type==='body').sort((a,b)=>a.date<b.date?-1:1);
     const inB=body.filter(inRange);
     const byWeekW={};body.forEach(r=>{const d=new Date(r.date);const wk=Math.floor((d-from)/6048e5);if(wk<0)return;(byWeekW[wk]=byWeekW[wk]||[]).push(+r.fields.weight);});
     const wkArr=Object.keys(byWeekW).sort((a,b)=>a-b).map(k=>({wk:+k,w:+(byWeekW[k].reduce((s,x)=>s+x,0)/byWeekW[k].length).toFixed(1)}));
-    const bp=wkArr.map(o=>o.w);const bmn=Math.min(...bp,99),bmx=Math.max(...bp,0);
+    const bp=wkArr.map(o=>o.w);const bmn=Math.min(...bp),bmx=Math.max(...bp);
     const bpts=wkArr.map((o,i)=>`${(i/(Math.max(1,bp.length-1))*280+10).toFixed(0)},${(70-(o.w-bmn)/(bmx-bmn||1)*60).toFixed(0)}`).join(' ');
     const firstW=inB[0]?inB[0].fields.weight:null,lastW=inB[inB.length-1]?inB[inB.length-1].fields.weight:null;
     // 营养汇总（区间内饮食记录）
@@ -1306,7 +1302,7 @@ body{display:flex;justify-content:center;min-height:100vh;}
     const train=state.records.filter(r=>r.type==='training'&&r.status==='done');
     const volAll=train.reduce((s,r)=>s+vol(r.fields.exercises),0);
     const body=state.records.filter(r=>r.type==='body').sort((a,b)=>a.date<b.date?1:-1);
-    const firstB=body[0],lastB=body[body.length-1];
+    const firstB=body[body.length-1],lastB=body[0];
     const ach=state.achievements.filter(a=>a.earned);
     const dayN=P.started?Math.max(0,Math.round((new Date(todayStr())-new Date(P.started))/864e5)):0;
     return `<div class="topbar"><div class="brand"><div class="mark">${ART.logo}</div>
@@ -1320,8 +1316,8 @@ body{display:flex;justify-content:center;min-height:100vh;}
           <div class="cap" style="margin-top:4px">从 ${P.started||'今天'} 到 ${todayStr()}，共 ${dayN} 天</div>
         </div>
         <div class="statrow">
-          <div class="stat"><div class="k">体重变化</div><div class="v">${firstB&&lastB?('-'+(firstB.fields.weight-lastB.fields.weight).toFixed(1)):'—'}<small> kg</small></div></div>
-          <div class="stat"><div class="k">体脂变化</div><div class="v">${firstB&&lastB?('-'+(firstB.fields.fat-lastB.fields.fat).toFixed(1)):'—'}<small> %</small></div></div>
+          <div class="stat"><div class="k">体重变化</div><div class="v">${firstB&&lastB?((lastB.fields.weight-firstB.fields.weight).toFixed(1)):'—'}<small> kg</small></div></div>
+          <div class="stat"><div class="k">体脂变化</div><div class="v">${firstB&&lastB?((lastB.fields.fat-firstB.fields.fat).toFixed(1)):'—'}<small> %</small></div></div>
         </div>
         <div class="statrow" style="margin-top:12px">
           <div class="stat"><div class="k">完成训练</div><div class="v">${train.length}<small> 次</small></div></div>
@@ -1446,20 +1442,20 @@ body{display:flex;justify-content:center;min-height:100vh;}
         r.media=wiz.media||[];state.records.unshift(r);
         state.media.push({id:'m'+Date.now(),key:r.cover,kind:'illustration',title:r.title,date:r.date,related:r.id,note:'新增封面'});
         state.activities.unshift({id:'ac'+Date.now(),date:r.date,time:r.time,text:'新增 '+TYPE[r.type].label+'：'+r.title,icon:TYPE[r.type].icon,rec:r.id});
-        const isFirstTrain=r.type==='training'&&!state.records.some(x=>x.type==='training');
-        if(r.type==='training'&&r.status==='done'){bumpStreak(r.date);applyPR(r);}
+        const isFirstTrain=r.type==='training'&&!state.records.some(x=>x.type==='training'&&x.id!==r.id);
+        if(r.type==='training'&&r.status==='done'){bumpStreak();applyPR(r);}
         if(isFirstTrain)unlock('第一次训练','training','记录从今天开始，证据会自己说话。');
         save();toast('已记录 · '+r.title);location.hash='#/detail/'+r.id;break;}
       case 'confirm-edit':{
         const r=readForm();const orig=state.records.find(x=>x.id===id);
         if(orig.type==='training'){const wasDone=orig.status==='done';Object.assign(orig,{title:r.title,date:r.date,time:r.time,status:r.status,tags:r.tags,note:r.note,cover:r.cover,fields:r.fields});
-          if(r.status==='done'&&!wasDone){bumpStreak(r.date);applyPR(orig);}if(r.status!=='done'&&wasDone)state.persona.streak=Math.max(0,state.persona.streak-1);}
+          if(r.status==='done'&&!wasDone){bumpStreak();applyPR(orig);}if(r.status!=='done'&&wasDone)bumpStreak();}
         else Object.assign(orig,{title:r.title,date:r.date,time:r.time,status:r.status,tags:r.tags,note:r.note,cover:r.cover,fields:r.fields});
         save();toast('已保存修改');location.hash='#/detail/'+id;break;}
       case 'toggle-status':{
         const r=state.records.find(x=>x.id===id);const was=r.status;
         r.status=r.status==='done'?'doing':'done';
-        if(r.type==='training'){if(r.status==='done'&&was!=='done'){bumpStreak(r.date);applyPR(r);}if(r.status!=='done'&&was==='done')state.persona.streak=Math.max(0,state.persona.streak-1);}
+        if(r.type==='training'){if(r.status==='done'&&was!=='done'){bumpStreak();applyPR(r);}if(r.status!=='done'&&was==='done')bumpStreak();}
         state.activities.unshift({id:'ac'+Date.now(),date:r.date,time:r.time,text:(r.status==='done'?'完成 ':'重开 ')+r.title,icon:r.status==='done'?'check':TYPE[r.type].icon,rec:r.id});
         save();render();toast(r.status==='done'?'已完成 · 进度已更新':'已恢复进行中');break;}
       case 'open-delete':openDelete(id);break;
@@ -1652,13 +1648,21 @@ body{display:flex;justify-content:center;min-height:100vh;}
     toast(top.name+' PR · '+top.weight+'kg');
   }
 
-  function bumpStreak(date){
-    state.persona.streak=(state.persona.streak||0)+1;
-    const n=state.persona.streak;
-    if(n===7)unlock('连续训练 7 天','check','习惯开始扎根。');
-    if(n===14)unlock('连续训练 14 天','training','双周节律，稳。');
-    if(n===21)unlock('连续训练 21 天','trophy','三周不中断，身体已适应。');
-    if(n===30)unlock('连续训练 30 天','record','月度全勤，证据确凿。');
+  function bumpStreak(){
+    // 真正的"连续训练天数"：按完成训练的日期去重，从今天(或昨天)向前数连续天数
+    const dates=state.records.filter(r=>r.type==='training'&&r.status==='done'&&r.date).map(r=>r.date).sort();
+    const set=new Set(dates);
+    if(!set.size){state.persona.streak=0;return;}
+    let start=todayStr();
+    if(!set.has(start)){const y=new Date(todayStr());y.setDate(y.getDate()-1);start=localDateStr(y);}
+    if(!set.has(start)){state.persona.streak=0;return;}
+    let cnt=0;let cur=new Date(start);
+    while(set.has(localDateStr(cur))){cnt++;cur.setDate(cur.getDate()-1);if(cnt>3650)break;}
+    state.persona.streak=cnt;
+    if(cnt>=7)unlock('连续训练 7 天','check','习惯开始扎根。');
+    if(cnt>=14)unlock('连续训练 14 天','training','双周节律，稳。');
+    if(cnt>=21)unlock('连续训练 21 天','trophy','三周不中断，身体已适应。');
+    if(cnt>=30)unlock('连续训练 30 天','record','月度全勤，证据确凿。');
   }
 
   function exportJSON(){
